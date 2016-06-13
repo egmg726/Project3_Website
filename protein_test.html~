@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+<script src="http://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
+</head>
+
+<body>
+<div class='container-fluid'>
+<div style="height: 400px; width: 400px" class='viewer_3Dmoljs' data-href='4igk.pdb1' data-backgroundcolor='green' data-style='cartoon:color=spectrum' data-select1='resi:1731' data-labelres1='backgroundOpacity:0.8;fontSize:14'></div>
+</div>
+<!--<div style="height: 400px; width: 400px; position: relative;" class='viewer_3Dmoljs' data-pdb='2POR' data-backgroundcolor='0xffffff' data-style='cartoon:color=spectrum'></div>-->
+
+ <div style="height: 400px; width: 400px; position: relative;" class='viewer_3Dmoljs' data-pdb='1YCR' data-backgroundcolor='0xffffff' 
+      data-select1='chain:A' data-style1='cartoon:color=spectrum' data-surface1='opacity:.7;color:white' data-select2='chain:B' data-style2='stick' data-select3='resi:19;chain:B' data-labelres3='backgroundOpacity:0.8;fontSize:14' data-style='color:green' data-select4='resn:PHE;chain:B' data-style4='cartoon'></div>
+</body>
+</html>
