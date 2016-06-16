@@ -13,7 +13,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Modern Business - Start Bootstrap Template</title>
+    <title> Results Page - Testing Stage</title>
 
 
 
@@ -23,6 +23,10 @@
 
     <!-- Custom CSS -->
     <link href="{% static 'p3_app/css/modern-business.css' %}" rel="stylesheet">
+
+    <!-- PViz CSS -->
+    <link href="{% static 'p3_app/css/pviz-core.css' %}" rel="stylesheet">
+    <script src="{% static 'p3_app/js/pvis-bundle.min.js' %}"></script>
 
     <!-- Custom Fonts -->
     <link href="{% static 'p3_app/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
@@ -52,7 +56,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">Start Bootstrap</a>
+                <a class="navbar-brand" href="{% url 'index' %}">Database Name</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -127,6 +131,24 @@
         <!-- /.container -->
     </nav>
 
+<div class='container'>
+      <div id="main"></div> </div>
+  <script>
+    var pviz = this.pviz;
+    var seqEntry = new pviz.SeqEntry({sequence : 'ABCDEFGIJKLMNOPQRSTUVWXYZ'});
+
+    new pviz.SeqEntryAnnotInteractiveView({
+      model : seqEntry,
+      el : '#main'
+      }).render();
+
+    seqEntry.addFeatures([
+      {category : 'foo', type : 'bar', start : 5, end : 12, text : 'hello'},
+      {category : 'foo', type : 'bar', start : 9, end : 15, text : 'world'}]);
+  </script>
+
+
+
     <!-- Page Content -->
     <div class="container">
 
@@ -134,10 +156,19 @@
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-header">Results
+                    {% if rsid != False %}
                     <small>{{ rsid }}</small>
+                    {% else %}
+                    <small>{{ chr_num }}.{{ chr_loc }}
+                    {% if brca1_object.rsid != '' %}
+                    ({{ brca1_object.rsid }})
+                    {% endif %}
+                    </small>
+                    {% endif %}
+
                 </h1>
                 <ol class="breadcrumb">
-                    <li><a href="index.html">Home</a>
+                    <li><a href="{% url 'index' %}">Home</a>
                     </li>
                     <li class="active">Results</li>
                 </ol>
@@ -145,24 +176,70 @@
         </div>
         <!-- /.row -->
 
+
+
+       
+       <!-- <canvas id="myCanvas" width ='50' height ='10' style="border:1px solid #000000;"> </canvas> -->
+        
+
+
+        
+
         <!-- Intro Content -->
         <div class="row">
             <div class="col-md-6">
-                <div style="height: 500px; width: 500px" class='viewer_3Dmoljs' data-pdb='4igk' data-backgroundcolor='white' data-style='cartoon:color=spectrum' data-select1='resi:1731' data-labelres1='backgroundOpacity:0.8;fontSize:14'></div>
-            <p> Caption here</p>
+                {% if pdb_entry != None %}
+                <div style="height: 500px; width: 500px" class='viewer_3Dmoljs' data-pdb='{{ pdb_entry }}' data-backgroundcolor='white' data-style='cartoon:color=spectrum' data-select1={{ resi_string }} data-labelres1='backgroundOpacity:0.8;fontSize:14'></div>
+            <p> View RCSB PDB entry <a href='http://www.rcsb.org/pdb/explore/explore.do?structureId={{ pdb_entry }}'>here</a></p>
+                {% else %}
+                <p> No model for this protein/residue selection has been found.</p>
+                {% endif %}
             </div>
             <div class="col-md-6">
-                <h2>{{ rsid }}</h2>
+                {% if rsid != False %}
+                <h2>{{ rsid } </h2>
+                {% else %}
+                
+                <h2>{{ chr_num }}.{{ chr_loc }}
+
+                    {% if brca1_object.rsid != '' %}
+                    ({{ brca1_object.rsid }})
+                    {% endif %}
+
+                </h2>
+                {% endif %}
+                <!--
+                <table>
+                <tr>
+                <th> variation location </th>
+                <td> {{ brca1_object.varlocation }} </td>
+                </tr>
+                <tr>
+                <th> amino acid change </th>
+                <td> {{ brca1_object.hgvs_cdna }} </td>
+                </tr>
+                <tr>
+                <th> protein change </th>
+                <td> {{ brca1_object.hgvs_prot }} </td>
+                </tr>
+                </table> -->
                 <p> <b>variation location:</b> {{ brca1_object.varlocation }}</p>
                 <p> <b>amino acid change:</b> {{ brca1_object.hgvs_cdna }}</p>
                 <p> <b>protein change:</b> {{ brca1_object.hgvs_prot }}</p>
-                {% if brca1_object.swissprot_type is not None %}
+                {% if brca1_object.swissprot_type != '' %}
                 <p> <b>swissprot type:</b> {{ brca1_object.swissprot_type }}</p>
-
                 {% endif %}
+                
             </div>
+
+
+
+
+
         </div>
         <!-- /.row -->
+
+
 
 
         <hr>
@@ -185,6 +262,108 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="{% static 'p3_app/js/bootstrap.min.js' %}"></script>
+
+    <!-- PViz.js -->
+    
+
+    <script>
+
+        var canvas = document.getElementById("myCanvas");
+        var ctx = canvas.getContext("2d");
+        var myRect={x:150, y:75, w:50, h:20, color:"red"};
+
+        var grd = ctx.createLinearGradient(0,0,0,50);
+        grd.addColorStop(0,"red");
+        grd.addColorStop(1,"blue");
+        
+        ctx.strokeStyle = "black";
+        ctx.fillStyle = grd;
+
+        
+        roundRect(ctx, 5, 5, 50, 50,20,true);
+
+
+
+        //roundRect(ctx, 5, 5, 50, 50,20,true);
+
+
+// To change the color on the rectangle, just manipulate the context
+//ctx.strokeStyle = "rgb(255, 0, 0)";
+//ctx.fillStyle = "rgba(255, 255, 0, .5)";
+//roundRect(ctx, 100, 5, 100, 100, 20, true);
+// Manipulate it again
+
+// Different radii for each corner, others default to 0
+//roundRect(ctx, 300, 5, 200, 100, {
+//  tl: 50,
+//  br: 25
+//}, true);
+
+        
+
+
+
+        $(document).ready(function(){
+        $(canvas).hover(function(){
+        
+        roundRect(ctx, 5, 5, 50, 50,20,true);
+        ctx.fillStyle = 'red';
+        ctx.fill();} , function(){ 
+        roundRect(ctx, 5, 5, 50, 50,20,true);
+        ctx.fillStyle = grd;
+        ctx.fill();
+        });
+        mouse move
+
+        //separate images into separate divs
+
+
+        //$(canvas).mousemove(function(event){
+       //var = mouseCoordinates = {x:-1,y=-1};
+        //mouseCoordinates.x = event.pageX;
+        //mouseCoordinates.y = event.pageY;
+        //});
+
+
+});
+
+
+    function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+  if (typeof stroke == 'undefined') {
+    stroke = true;
+  }
+  if (typeof radius === 'undefined') {
+    radius = 5;
+  }
+  if (typeof radius === 'number') {
+    radius = {tl: radius, tr: radius, br: radius, bl: radius};
+  } else {
+    var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+    for (var side in defaultRadius) {
+      radius[side] = radius[side] || defaultRadius[side];
+    }
+  }
+  ctx.beginPath();
+  ctx.moveTo(x + radius.tl, y);
+  ctx.lineTo(x + width - radius.tr, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+  ctx.lineTo(x + width, y + height - radius.br);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+  ctx.lineTo(x + radius.bl, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+  ctx.lineTo(x, y + radius.tl);
+  ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+  ctx.closePath();
+  if (fill) {
+    ctx.fill();
+  }
+  if (stroke) {
+    ctx.stroke();
+  }
+
+}
+
+    </script>
 
     
 

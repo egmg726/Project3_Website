@@ -1,0 +1,20 @@
+<head>
+  <link rel="stylesheet" type="text/css" href="/project/homemsc/eg315/project3/p3_website/p3_app/static/p3_app/css/pviz-core.css">
+  <script src="/project/homemsc/eg315/project3/p3_website/p3_app/static/p3_app/js/pviz-bundle.min.js"></script>
+</head>
+<body>
+  <div id="main"></div>
+  <script>
+    var pviz = this.pviz;
+    var seqEntry = new pviz.SeqEntry({sequence : 'ABCDEFGIJKLMNOPQRSTUVWXYZ'});
+
+    new pviz.SeqEntryAnnotInteractiveView({
+      model : seqEntry,
+      el : '#main'
+      }).render();
+
+    seqEntry.addFeatures([
+      {category : 'foo', type : 'bar', start : 5, end : 12, text : 'hello'},
+      {category : 'foo', type : 'bar', start : 9, end : 15, text : 'world'}]);
+  </script>
+</body>

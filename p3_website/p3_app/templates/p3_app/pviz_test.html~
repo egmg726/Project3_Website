@@ -1,0 +1,210 @@
+
+{% load staticfiles %}
+<head>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'p3_app/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="{% static 'p3_app/css/modern-business.css' %}" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+
+  <link rel="stylesheet" type="text/css" href="{% static 'p3_app/css/pviz-core.css' %}">
+<script src="http://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
+  <script src="{% static 'p3_app/js/pviz-bundle.min.js' %}"></script>
+</head>
+<body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'index' %}">Database Name</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="active">
+                        <a href="about.html">About</a>
+                    </li>
+                    <li>
+                        <a href="services.html">Services</a>
+                    </li>
+                    <li>
+                        <a href="contact.html">Contact</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Portfolio <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="portfolio-1-col.html">1 Column Portfolio</a>
+                            </li>
+                            <li>
+                                <a href="portfolio-2-col.html">2 Column Portfolio</a>
+                            </li>
+                            <li>
+                                <a href="portfolio-3-col.html">3 Column Portfolio</a>
+                            </li>
+                            <li>
+                                <a href="portfolio-4-col.html">4 Column Portfolio</a>
+                            </li>
+                            <li>
+                                <a href="portfolio-item.html">Single Portfolio Item</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Blog <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="blog-home-1.html">Blog Home 1</a>
+                            </li>
+                            <li>
+                                <a href="blog-home-2.html">Blog Home 2</a>
+                            </li>
+                            <li>
+                                <a href="blog-post.html">Blog Post</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Other Pages <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="full-width.html">Full Width Page</a>
+                            </li>
+                            <li>
+                                <a href="sidebar.html">Sidebar Page</a>
+                            </li>
+                            <li>
+                                <a href="faq.html">FAQ</a>
+                            </li>
+                            <li>
+                                <a href="404.html">404</a>
+                            </li>
+                            <li>
+                                <a href="pricing.html">Pricing Table</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <!-- Page Heading/Breadcrumbs -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Results
+                    {% if rsid != False %}
+                    <small>{{ rsid }}</small>
+                    {% else %}
+                    <small>{{ chr_num }}.{{ chr_loc }}
+                    {% if brca1_object.rsid != '' %}
+                    ({{ brca1_object.rsid }})
+                    {% endif %}
+                    </small>
+                    {% endif %}
+
+                </h1>
+                <ol class="breadcrumb">
+                    <li><a href="{% url 'index' %}">Home</a>
+                    </li>
+                    <li class="active">Results</li>
+                </ol>
+            </div>
+        </div>
+        <!-- /.row -->
+
+
+
+
+<div class="container col-lg-12 row">
+  <div id="main"></div>
+  <script>
+    var pviz = this.pviz;
+    var seqEntry = new pviz.SeqEntry({sequence : 'ABCDEFGIJKLMNOPQRSTUVWXYZ'});
+
+    new pviz.SeqEntryAnnotInteractiveView({
+      model : seqEntry,
+      el : '#main'
+      }).render();
+
+    seqEntry.addFeatures([
+      {category : 'foo', type : 'bar', start : 5, end : 12, text : 'hello'},
+      {category : 'foo', type : 'bar', start : 9, end : 15, text : 'world'}]);
+  </script>
+<br> <br>
+</div>
+
+
+
+        <!-- Intro Content -->
+        <div class="row col-lg-12">
+            <div class="col-md-6">
+                {% if pdb_entry != None %}
+                <div style="height: 500px; width: 500px" class='viewer_3Dmoljs' data-pdb='{{ pdb_entry }}' data-backgroundcolor='white' data-style='cartoon:color=spectrum' data-select1={{ resi_string }} data-labelres1='backgroundOpacity:0.8;fontSize:14'></div>
+            <p> View RCSB PDB entry <a href='http://www.rcsb.org/pdb/explore/explore.do?structureId={{ pdb_entry }}'>here</a></p>
+                {% else %}
+                <p> No model for this protein/residue selection has been found.</p>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                {% if rsid != False %}
+                <h2>{{ rsid }} </h2>
+                {% else %}
+                
+                <h2>{{ chr_num }}.{{ chr_loc }}
+
+                    {% if brca1_object.rsid != '' %}
+                    ({{ brca1_object.rsid }})
+                    {% endif %}
+
+                </h2>
+                {% endif %}
+                <!--
+                <table>
+                <tr>
+                <th> variation location </th>
+                <td> {{ brca1_object.varlocation }} </td>
+                </tr>
+                <tr>
+                <th> amino acid change </th>
+                <td> {{ brca1_object.hgvs_cdna }} </td>
+                </tr>
+                <tr>
+                <th> protein change </th>
+                <td> {{ brca1_object.hgvs_prot }} </td>
+                </tr>
+                </table> -->
+                <p> <b>variation location:</b> {{ brca1_object.varlocation }}</p>
+                <p> <b>amino acid change:</b> {{ brca1_object.hgvs_cdna }}</p>
+                <p> <b>protein change:</b> {{ brca1_object.hgvs_prot }}</p>
+                {% if brca1_object.swissprot_type != '' %}
+                <p> <b>swissprot type:</b> {{ brca1_object.swissprot_type }}</p>
+                {% endif %}
+                
+            </div>
+
+
+
+
+
+        </div>
+        <!-- /.row -->
+
+
+</body>

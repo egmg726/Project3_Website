@@ -13,7 +13,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Modern Business - Start Bootstrap Template</title>
+    <title>SNP Site - Testing Phase</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="{% static 'p3_app/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -46,7 +46,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">Start Bootstrap</a>
+                <a class="navbar-brand" href="{% url 'index' %}">Database Name</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -167,23 +167,30 @@
         <!-- Marketing Icons Section -->
         <div class="row">
             <div class="col-lg-12">
+            
+
                 <h1 class="page-header">
-                    Enter details of the SNP below:
+                    Choose one of two search methods
                 </h1>
             </div>
 
-	
+	<div class="col-md-6">
+                    <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-fw fa-check"></i> Enter SNP Details Below:</h4>
+                    </div>
+                    <div class="panel-body">
 	<form action='' class='form-horizontal' role='form' method='post'>
 	{% csrf_token %}
 	<div class='form-group'>
-	    <label class="control-label col-sm-2" for="rs_id">rsID:</label>
-		<div class='col-sm-2'>
+	    <label class="control-label col-sm-5" for="rs_id">rsID:</label>
+		<div class='col-sm-5'>
     	    <input type="text" class="form-control" id="rs_id" name="rs_id">
 		</div> </div>
 	
       <div class="form-group">
           
-            <label class="control-label col-sm-2" for="snpsubstitution">SNP Substitution:</label>
+            <label class="control-label col-sm-5" for="snpsubstitution">SNP Substitution:</label>
             <div class='col-sm-2'>
             <select class="form-control" id="snpsubstitution" name="snpsubstitution">
               <option>A</option>
@@ -193,17 +200,62 @@
             </select>
           </div> </div>
 
-	
-	
-
-	<div class="col-sm-offset-2 col-sm-10">
+	<div class="col-sm-offset-5 col-sm-5">
 	<button type="submit" class="btn btn-default">Submit</button>
+    {% if which_error = 'rsid' %}
 	{% for error in errors %}
 	<p><b>{{ error }}</b><p>
 	{% endfor %}
+    {% endif %}
+
 	</div>
 	</form>
+                </div>
+            </div> </div>
 	
+	<div class="col-md-6">
+                    <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-fw fa-check"></i> Enter Variation Details Below:</h4>
+                    </div>
+                    <div class="panel-body">
+	<form action='' class='form-horizontal' role='form' method='post'>
+	{% csrf_token %}
+	<div class='form-group'>
+	    <label class="control-label col-sm-5" for="chr_num">Chromosome Number:</label>
+		<div class="col-sm-5">
+    	    <input type="text" class="form-control" id="chr_num" name="chr_num">
+		</div> </div>
+	<div class='form-group'>
+	    <label class="control-label col-sm-5" for="chr_loc">Chromosome Location:</label>
+		<div class="col-sm-5">
+    	    <input type="text" class="form-control" id="chr_loc" name="chr_loc">
+		</div> </div>
+	
+      <div class="form-group">
+          
+            <label class="control-label col-sm-5" for="snpsubstitution">SNP Substitution:</label>
+            <div class='col-sm-2'>
+            <select class="form-control" id="snpsubstitution" name="snpsubstitution">
+              <option>A</option>
+              <option>T</option>
+              <option>C</option>
+              <option>G</option>
+            </select>
+          </div> </div>
+
+	<div class="col-sm-offset-5 col-sm-5">
+	<button type="submit" class="btn btn-default">Submit</button>
+    {% if which_error = 'chr' %}
+	{% for error in errors %}
+	<p><b>{{ error }}</b><p>
+	{% endfor %}
+    {% endif %}
+	</div>
+	</form>
+                </div>
+            </div> </div>
+
 
             <div class="col-md-4">
                 <div class="panel panel-default">

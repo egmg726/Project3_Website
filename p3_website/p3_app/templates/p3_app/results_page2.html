@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% load staticfiles %}
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Modern Business - Start Bootstrap Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'p3_app/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="{% static 'p3_app/css/modern-business.css' %}" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+
+    <!-- EG Custom CSS -->
+    <link href="{% static 'p3_app/css/style.css' %}" rel="stylesheet">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+  
+
+    <!-- jQuery -->
+<!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> -->
+    <script src="{% static 'p3_app/js/jquery.js' %}"></script>
+
+
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'p3_app/js/bootstrap.min.js' %}"></script>
+
+
+<script>
+var bootstrapButton = $.fn.button.noConflict() // return $.fn.button to previously assigned value
+$.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Bootstrap functionality
+</script>
+
+ <script src="http://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script> 
+
+
+  <script src="{% static 'p3_app/js/pviz-bundle.min.js' %}"></script>
+	<link rel="stylesheet" type="text/css" href="{% static 'p3_app/css/pviz-core.css' %}"> 
+
+<!--
+<svg width="100" height="50" version="1.1" xmlns="http://www.w3.org/2000/svg">
+       <style type="text/css">
+        rect{fill:url(#MyGradient)}
+      </style>
+      <defs>
+        <linearGradient id="MyGradient">
+          <stop offset="5%" stop-color="#F60" />
+          <stop offset="95%" stop-color="#FF6" />
+        </linearGradient>
+      </defs>
+-->
+
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'index' %}">Database Name</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="about.html">About</a>
+                    </li>
+                    <li>
+                        <a href="services.html">Services</a>
+                    </li>
+                    <li>
+                        <a href="contact.html">Contact</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Portfolio <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="portfolio-1-col.html">1 Column Portfolio</a>
+                            </li>
+                            <li>
+                                <a href="portfolio-2-col.html">2 Column Portfolio</a>
+                            </li>
+                            <li>
+                                <a href="portfolio-3-col.html">3 Column Portfolio</a>
+                            </li>
+                            <li>
+                                <a href="portfolio-4-col.html">4 Column Portfolio</a>
+                            </li>
+                            <li>
+                                <a href="portfolio-item.html">Single Portfolio Item</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Other Pages <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="full-width.html">Full Width Page</a>
+                            </li>
+                            <li>
+                                <a href="sidebar.html">Sidebar Page</a>
+                            </li>
+                            <li>
+                                <a href="faq.html">FAQ</a>
+                            </li>
+                            <li>
+                                <a href="404.html">404</a>
+                            </li>
+                            <li>
+                                <a href="pricing.html">Pricing Table</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <!-- Page Heading/Breadcrumbs -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Results
+ 
+                    {% if rsid != False %}
+                    <small>{{ rsid }}</small>
+                    {% else %}
+                    <small>{{ chr_num }}.{{ chr_loc }}
+                    {% if brca1_object.rsid != '' %}
+                    ({{ brca1_object.rsid }})
+                    {% endif %}
+                    </small>
+                    {% endif %}
+
+                </h1>
+                <ol class="breadcrumb">
+                    <li><a href="{% url 'index' %}">Home</a>
+                    </li>
+                    <li class="active">Results</li>
+                </ol>
+            </div>
+        </div>
+        <!-- /.row -->
+
+
+<div class="container col-lg-12">
+<h3> Protein Sequence for {{ brca1_object.gene }}</h3>
+  <div id="main"></div>
+      <div class="row">
+            <div class="span2" >
+                <strong>mouseover</strong>
+            </div><div class="span10" id="output-mouse-over"></div>
+        </div>
+  <script>
+    var pviz = this.pviz;
+    var seqEntry = new pviz.SeqEntry({sequence : '{{ sequence }}'});
+
+    new pviz.SeqEntryAnnotInteractiveView({
+      model : seqEntry,
+      el : '#main'
+      }).render();
+
+pviz.FeatureDisplayer.setCustomHandler('mickey', {
+                appender : function(viewport, svgGroup, features, type) {
+                    var selCircle = svgGroup.selectAll("g.feature.internal.data." + type).data(features).enter().append("g").attr("class", "feature internal data " + type)
+                    selCircle.append("circle").attr('class', 'variation mickey')
+                    //add a 'doubltful class based on the feature 'improbable' attribute
+                    .classed('doubtful', function(ft) {
+                        return ft.improbable
+                    }).attr('r', function(ft) {
+                        return 4 * Math.sqrt(ft.count)
+                    });
+                    return selCircle;
+                },
+                positioner : function(viewport, d3selection) {
+                    d3selection.attr('transform', function(ft, i) {
+                        return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.1 + ft.displayTrack) + ')';
+                    });
+                    return d3selection
+                }
+            });
+
+
+
+
+
+    pviz.FeatureDisplayer.trackHeightPerCategoryType.pfam = 2.2;
+
+    var pfam_fts = [];
+    function add_pfam_values(){
+    {% for keys, values in match_dict.items %}
+    pfam_fts.push(['{{ values.3 }}','{{ values.4 }}','{{ values.2 }}'])
+
+    {% endfor %}
+};
+
+add_pfam_values();
+
+/*
+        pviz.FeatureDisplayer.setCustomHandler(['pfam_type'], {
+            appender : function(viewport, svgGroup, features, type) {
+                var sel = svgGroup.selectAll("g.feature.internal.data." + type).data(features).enter().append("g").attr("class", "feature internal data " + type)
+
+                sel.append("rect").attr('class', 'pfam pfam_type');
+
+                return sel;
+            },
+
+
+                positioner : function(viewport, d3selection) {
+                    d3selection.attr('transform', function(ft) {
+                        return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.1 + ft.displayTrack) + ')';
+                    });
+                    return d3selection
+                }
+        });
+
+*/
+
+
+        seqEntry.addFeatures(pfam_fts.map(function(ft) {
+            return {
+                category : 'pfam',
+                type : 'pfam_type',
+                start : ft[0]-1,
+                end : ft[1]-1,
+                text : ft[2],
+                count: 2,
+            }
+        }));
+
+
+            seqEntry.addFeatures([{
+                category : 'variation',
+                type : 'mickey',
+                count: 2,
+                start : {{ resi_num }}-1,
+                end : {{ resi_num }}-1
+            }]);
+
+                seqEntry.addFeatures([{
+                category : 'variation_test',
+                type : 'mickey',
+                count: 2,
+                start : {{ resi_num }}-1,
+                end : {{ resi_num }}-1
+            }]);
+
+
+            pviz.FeatureDisplayer.addMouseoverCallback(['pfam_type'], function(ft) {
+                mouseOveredFT = ft;
+                var el = $('#output-mouse-over');
+                el.empty();
+                el.html('<pre>' + 
+
+                
+                JSON.stringify(ft.text)+'{{ resi_num }}'
+
+
+                +'</pre>')
+            }).addMouseoutCallback(['helix', 'turn', 'beta_strand'], function(ft) {
+                mouseOveredFT = undefined;
+                
+            });
+
+
+  </script>
+<br> <br>
+</div>
+
+
+
+        <!-- Intro Content -->
+        <div class="row col-lg-12">
+            <div class="col-md-6">
+                {% if pdb_entry != None %}
+                <div style="height: 500px; width: 500px" class='viewer_3Dmoljs' data-pdb='{{ pdb_entry }}' data-backgroundcolor='white' data-style='cartoon:color=spectrum' data-select1={{ resi_string }} data-labelres1='backgroundOpacity:0.8;fontSize:14'></div>
+
+    <h4><b>{{ pdb_list.1 }}</b></h4> 
+
+    {% for keys,values in pdb_list.0.items %}
+    <p> substructure {{ keys }} </p>
+    
+    <table>
+    {% for k,v in values.items %}
+    <tr>
+    <td> {{ k }} </td>
+    <td> {{ v }} </td>
+
+    </tr>
+    {% endfor %}
+    </table>
+    
+    {% endfor %}
+<br> <br>
+
+<p> Citation: {{ pdb_list.2 }} </p>
+<br>
+            <p> View RCSB PDB entry <a href='http://www.rcsb.org/pdb/explore/explore.do?structureId={{ pdb_entry }}'>here</a> </p>
+
+                {% else %}
+                <p> No model for this protein/residue selection has been found.</p>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                {% if rsid != False %}
+                <h2>{{ rsid }} </h2>
+                {% else %}
+                
+                <h2>{{ chr_num }}.{{ chr_loc }}
+
+                    {% if brca1_object.rsid != '' %}
+                    ({{ brca1_object.rsid }})
+                    {% endif %}
+
+                </h2>
+                {% endif %}
+                <!--
+                <table>
+                <tr>
+                <th> variation location </th>
+                <td> {{ brca1_object.varlocation }} </td>
+                </tr>
+                <tr>
+                <th> amino acid change </th>
+                <td> {{ brca1_object.hgvs_cdna }} </td>
+                </tr>
+                <tr>
+                <th> protein change </th>
+                <td> {{ brca1_object.hgvs_prot }} </td>
+                </tr>
+                </table> -->
+                <p> <b>variation location:</b> {{ brca1_object.varlocation }}</p>
+                <p> <b>amino acid change:</b> {{ brca1_object.hgvs_cdna }}</p>
+                <p> <b>protein change:</b> {{ brca1_object.hgvs_prot }}</p>
+                {% if brca1_object.swissprot_type != '' %}
+                <p> <b>swissprot type:</b> {{ brca1_object.swissprot_type }}</p>
+                {% endif %}
+                
+            </div>
+
+
+
+
+
+        </div>
+        <!-- /.row -->
+
+ 
+        
+
+    </div>
+    <!-- /.container -->
+
+
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+
+(function($){
+
+    $(document).ready(function (){
+            $('.dropdown-toggle').dropdown();
+    });
+
+})(jQuery);
+
+</script>
+
+</body>
+
+</html>
