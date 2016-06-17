@@ -1,5 +1,5 @@
 circle.variation.mickey {
-       fill: red;
+       fill: green;
        fill-opacity: 0.6;
 }
 

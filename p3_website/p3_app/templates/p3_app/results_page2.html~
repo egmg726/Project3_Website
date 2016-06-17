@@ -11,7 +11,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Modern Business - Start Bootstrap Template</title>
+    <title>Results Page - Testing Stage</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="{% static 'p3_app/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -181,9 +181,12 @@ $.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Boot
 <h3> Protein Sequence for {{ brca1_object.gene }}</h3>
   <div id="main"></div>
       <div class="row">
-            <div class="span2" >
-                <strong>mouseover</strong>
-            </div><div class="span10" id="output-mouse-over"></div>
+        <div class="col-lg-6" id="output-mouse-over">
+        <pre> <b>Scroll over the domains for more information.</b> </pre>
+        </div>
+        <div class="col-lg-6">
+        <pre> protein info here </pre>
+        </div>
         </div>
   <script>
     var pviz = this.pviz;
@@ -194,31 +197,35 @@ $.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Boot
       el : '#main'
       }).render();
 
-//pviz.FeatureDisplayer.setCustomHandler('mickey', {
-//                appender : function(viewport, svgGroup, features, type) {
-//                    var selCircle = svgGroup.selectAll("g.feature.internal.data." + type).data(features).enter().append("g").attr("class", "feature internal data " + type)
-//                    selCircle.append("circle").attr('class', 'variation mickey')
-//                    //add a 'doubltful class based on the feature 'improbable' attribute
-//                    .classed('doubtful', function(ft) {
-//                        return ft.improbable
- //                   }).attr('r', function(ft) {
-  //                      return 4 * Math.sqrt(ft.count)
-    //                });
-      //              return selCircle;
-    //            },
-      //          positioner : function(viewport, d3selection) {
-        //            d3selection.attr('transform', function(ft, i) {
-      //                  return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.1 + ft.displayTrack) + ')';
-       //             });
-         //           return d3selection
-           //     }
-//            });
+pviz.FeatureDisplayer.setCustomHandler('mickey', {
+                appender : function(viewport, svgGroup, features, type) {
+                    var selCircle = svgGroup.selectAll("g.feature.internal.data." + type).data(features).enter().append("g").attr("class", "feature internal data " + type)
+                    selCircle.append("circle").attr('class', 'variation mickey')
+                    //add a 'doubltful class based on the feature 'improbable' attribute
+                    .classed('doubtful', function(ft) {
+                        return ft.improbable
+                    }).attr('r', function(ft) {
+                        return 4 * Math.sqrt(ft.count)
+                    });
+                    return selCircle;
+                },
+
+
+            positioner : function(viewport, d3selection) {
+                    d3selection.attr('transform', function(ft, i) {
+                        return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.1 + ft.displayTrack) + ')';
+                    });
+                    return d3selection
+                }
+            });
 
 
 
 
 
-    pviz.FeatureDisplayer.trackHeightPerCategoryType.pfam = 2.2;
+    pviz.FeatureDisplayer.trackHeightPerCategoryType.pfam = 1.1;
+    //pviz.FeatureDisplayer.positioners.pfam = 
+    
 
     var pfam_fts = [];
     function add_pfam_values(){
@@ -230,7 +237,12 @@ $.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Boot
 
 add_pfam_values();
 
-        pviz.FeatureDisplayer.setCustomHandler(['pfam_type'], {
+
+/*
+//http://research-pub.gene.com/pviz/examples/example-different-track-heights.html
+
+
+        pviz.FeatureDisplayer.setCustomHandler('pfam_type', {
             appender : function(viewport, svgGroup, features, type) {
                 var sel = svgGroup.selectAll("g.feature.internal.data." + type).data(features).enter().append("g").attr("class", "feature internal data " + type)
 
@@ -239,16 +251,27 @@ add_pfam_values();
                 return sel;
             },
 
-
                 positioner : function(viewport, d3selection) {
-                    d3selection.attr('transform', function(ft) {
+
+                var w1 = viewport.scales.x(10) - viewport.scales.x(9);
+                var hMax = viewport.scales.y(1) * pviz.FeatureDisplayer.heightFactor('pfam_type');
+
+                d3selection.selectAll("rect.pfam.pfam_type").attr('height', hMax);
+                d3selection.selectAll("rect.pfam.pfam_type").attr('x', function(ft) {
+                    return viewport.scales.x(ft.start-20)*w1;
+                }).attr('width', function(ft) {
+                    return viewport.scales.x(ft.end) - viewport.scales.x(ft.start);
+                });
+
+
+                    d3selection.attr('transform', function(ft, i) {
                         return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.1 + ft.displayTrack) + ')';
                     });
                     return d3selection
                 }
         });
 
-
+*/
 
 
         seqEntry.addFeatures(pfam_fts.map(function(ft) {
@@ -257,7 +280,8 @@ add_pfam_values();
                 type : 'pfam_type',
                 start : ft[0]-1,
                 end : ft[1]-1,
-                text : ft[2],
+                text : '',
+                inner_text : ft[2],
                 count: 2,
             }
         }));
@@ -271,13 +295,7 @@ add_pfam_values();
                 end : {{ resi_num }}-1
             }]);
 
-                seqEntry.addFeatures([{
-                category : 'variation_test',
-                type : 'mickey',
-                count: 2,
-                start : {{ resi_num }}-1,
-                end : {{ resi_num }}-1
-            }]);
+
 
 
             pviz.FeatureDisplayer.addMouseoverCallback(['pfam_type'], function(ft) {
@@ -287,11 +305,11 @@ add_pfam_values();
                 el.html('<pre>' + 
 
                 
-                JSON.stringify(ft.text)+'{{ resi_num }}'
+                JSON.stringify(ft.inner_text)+'{{ resi_num }}'
 
 
                 +'</pre>')
-            }).addMouseoutCallback(['helix', 'turn', 'beta_strand'], function(ft) {
+            }).addMouseoutCallback(['pfam_type'], function(ft) {
                 mouseOveredFT = undefined;
                 
             });
@@ -305,25 +323,32 @@ add_pfam_values();
 
         <!-- Intro Content -->
         <div class="row col-lg-12">
-            <div class="col-md-6">
+        <h2> PDB Structure & Info</h2>
+
+<!-- need to change data-pdb so that it accesses static files -->
+
+            <div class="col-lg-6">
                 {% if pdb_entry != None %}
                 <div style="height: 500px; width: 500px" class='viewer_3Dmoljs' data-pdb='{{ pdb_entry }}' data-backgroundcolor='white' data-style='cartoon:color=spectrum' data-select1={{ resi_string }} data-labelres1='backgroundOpacity:0.8;fontSize:14'></div>
+
+</div> <div class="col-lg-6">
 
     <h4><b>{{ pdb_list.1 }}</b></h4> 
 
     {% for keys,values in pdb_list.0.items %}
     <p> substructure {{ keys }} </p>
     
-    <table>
+    <table class="table table-hover">
     {% for k,v in values.items %}
+    {% if v != '' %}
     <tr>
-    <td> {{ k }} </td>
+    <td> <b>{{ k }}</b> </td>
     <td> {{ v }} </td>
-
     </tr>
+    {% endif %}
     {% endfor %}
     </table>
-    
+    <br>
     {% endfor %}
 <br> <br>
 
@@ -334,8 +359,11 @@ add_pfam_values();
                 {% else %}
                 <p> No model for this protein/residue selection has been found.</p>
                 {% endif %}
-            </div>
-            <div class="col-md-6">
+            </div> 
+
+<!-- end of row -->
+</div>
+            <div class="row col-lg-12">
                 {% if rsid != False %}
                 <h2>{{ rsid }} </h2>
                 {% else %}
@@ -363,18 +391,70 @@ add_pfam_values();
                 <td> {{ brca1_object.hgvs_prot }} </td>
                 </tr>
                 </table> -->
+                <div class='col-lg-6'>
+                <p> <b>chromosome location: </b> {{ brca1_object.hg19_chr }}.{{ brca1_object.hg19_pos }} </p>
                 <p> <b>variation location:</b> {{ brca1_object.varlocation }}</p>
                 <p> <b>amino acid change:</b> {{ brca1_object.hgvs_cdna }}</p>
                 <p> <b>protein change:</b> {{ brca1_object.hgvs_prot }}</p>
                 {% if brca1_object.swissprot_type != '' %}
                 <p> <b>swissprot type:</b> {{ brca1_object.swissprot_type }}</p>
                 {% endif %}
-                
-            </div>
+                {% if brca1_object.hgmd_acc != '' %}
+
+                <p> <b>HGMD accession number:</b> {{ brca1_object.hgmd_acc }} </p>
+                {% endif %}
+                {% if hgmd_pubmed_list != None %}
+ 
+                <p> <b> PubMed Citations: </b> 
+                {% for pmid in hgmd_pubmed_list %}
+
+                {{ pmid }} 
+
+                {% endfor %} </p>
+
+                {% endif %}
+    </div>
+
+<div class='col-lg-6'>
 
 
+{% if brca1_object1.alamut_siftprediction != '' %}
+
+<p> <b>SIFT prediction: </b> {{ brca1_object.alamut_siftprediction }} </p> 
+<p> <b>SIFT weight: </b> {{ brca1_object.alamut_siftweight }} </p>
+<p> <b>SIFT median: </b> {{ brca1_object.alamut_siftmedian }} </p>
+
+{% endif %}
+
+{% if brca1_object.alamut_mappprediction != '' %}
+<p> <b>MAPP prediction: </b> {{ brca1_object.alamut_mappprediction }}</p>
 
 
+{% endif %}
+
+{% if brca1_object.muttaster_prediction != '' %}
+<p> <b>muttaster prediction: </b> {{ brca1_object.muttaster_prediction }}</p>
+{% if brca1_object.muttaster_features != '' %}
+<p> <b> muttaster features: </b>
+{% for feature in brca1_object.muttaster_features %}
+<li> {{ feature }} </li>
+
+{% endfor %}
+</p>
+{% endif %}
+
+{% endif %}
+
+
+{% if brca1_object.polyphen2_prediction != '' %}
+<p> <b>PolyPhen2 prediction: </b> {{ brca1_object.polyphen2_prediction }}</p> 
+
+
+{% endif %}
+
+<canvas id='circle_test' width='16' height='16'> </canvas>
+
+</div>
 
         </div>
         <!-- /.row -->
@@ -385,7 +465,25 @@ add_pfam_values();
     </div>
     <!-- /.container -->
 
+<script>
 
+var c = document.getElementById('circle_test');
+var ctx = c.getContext('2d');
+ctx.fillStyle='red'; //change fillstyle based on value of prediction
+
+ function drawCircle(context,fill){
+        context.beginPath();
+        context.arc(8, 8, 5, 0, 2 * Math.PI);
+        context.closePath();
+        context.stroke();
+        if(fill){
+            context.fill()
+        }
+    }
+
+drawCircle(ctx,true)
+
+</script>
 
 <script>
 $(document).ready(function(){
@@ -405,3 +503,4 @@ $(document).ready(function(){
 </body>
 
 </html>
+

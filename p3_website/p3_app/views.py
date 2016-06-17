@@ -142,8 +142,17 @@ def index(request):
 
         #additional pfam info for mouseover feature
 
+        if brca1_object.hgmd_pubmed == 'Pubmed':
+            hgmd_pubmed_list = brca1_object.hgmd_pubmed_list.split(' ')
+        else:
+            hgmd_pubmed_list = None
+                
+        #add info for pubmed list - turn into dictionary of citation values
 
-        context = {'rsid':rsid, 'brca1_object':brca1_object,'resi_string':resi_string, 'resi_num':resi_num, 'pdb_entry':pdb_entry, 'chr_num':chr_num,'chr_loc':chr_loc, 'pdb_list':pdb_list, 'match_dict':match_dict, 'sequence':sequence}
+        if brca1_object.muttaster_features != '':
+            brca1_object.muttaster_features = brca1_object.muttaster_features.split(',')
+
+        context = {'rsid':rsid, 'brca1_object':brca1_object,'resi_string':resi_string, 'resi_num':resi_num, 'pdb_entry':pdb_entry, 'chr_num':chr_num,'chr_loc':chr_loc, 'pdb_list':pdb_list, 'match_dict':match_dict, 'sequence':sequence, 'hgmd_pubmed_list':hgmd_pubmed_list}
         return render(request,'p3_app/results_page2.html',context)
 
     return render(request,'p3_app/index.html',{})

@@ -351,21 +351,6 @@
 
     </script>
 
-<div class='container'>
-      <div id="main"></div> </div>
-  <script>
-    var pviz = this.pviz;
-    var seqEntry = new pviz.SeqEntry({sequence : 'ABCDEFGIJKLMNOPQRSTUVWXYZ'});
-
-    new pviz.SeqEntryAnnotInteractiveView({
-      model : seqEntry,
-      el : '#main'
-      }).render();
-
-    seqEntry.addFeatures([
-      {category : 'foo', type : 'bar', start : 5, end : 12, text : 'hello'},
-      {category : 'foo', type : 'bar', start : 9, end : 15, text : 'world'}]);
-  </script>
     
 
 </body>
