@@ -179,6 +179,7 @@ $.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Boot
 
 <div class="container col-lg-12">
 <h3> Protein Sequence for {{ brca1_object.gene }}</h3>
+
   <div id="main"></div>
       <div class="row">
         <div class="col-lg-6" id="output-mouse-over">
@@ -194,7 +195,12 @@ $.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Boot
 
     new pviz.SeqEntryAnnotInteractiveView({
       model : seqEntry,
-      el : '#main'
+      el : '#main',
+      margins: {
+        left: 100,
+        right: 20,
+        top: 50,
+        },
       }).render();
 
 pviz.FeatureDisplayer.setCustomHandler('mickey', {
@@ -210,7 +216,6 @@ pviz.FeatureDisplayer.setCustomHandler('mickey', {
                     return selCircle;
                 },
 
-
             positioner : function(viewport, d3selection) {
                     d3selection.attr('transform', function(ft, i) {
                         return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.1 + ft.displayTrack) + ')';
@@ -223,7 +228,7 @@ pviz.FeatureDisplayer.setCustomHandler('mickey', {
 
 
 
-    pviz.FeatureDisplayer.trackHeightPerCategoryType.pfam = 1.1;
+    //pviz.FeatureDisplayer.trackHeightPerCategoryType.pfam = 1.1;
     //pviz.FeatureDisplayer.positioners.pfam = 
     
 
@@ -237,8 +242,19 @@ pviz.FeatureDisplayer.setCustomHandler('mickey', {
 
 add_pfam_values();
 
+    var swissprot_fts = [];
+    function add_swissprot_values(){
+    {% for keys, values in swissprot_dict.items %}
+    swissprot_fts.push(['{{ values.0 }}','{{ values.1 }}','{{ values.2 }}','{{ values.3 }}'])
+
+    {% endfor %}
+};
+
+add_swissprot_values();
+
 
 /*
+
 //http://research-pub.gene.com/pviz/examples/example-different-track-heights.html
 
 
@@ -258,7 +274,7 @@ add_pfam_values();
 
                 d3selection.selectAll("rect.pfam.pfam_type").attr('height', hMax);
                 d3selection.selectAll("rect.pfam.pfam_type").attr('x', function(ft) {
-                    return viewport.scales.x(ft.start-20)*w1;
+                    return viewport.scales.x(ft.start)*w1;
                 }).attr('width', function(ft) {
                     return viewport.scales.x(ft.end) - viewport.scales.x(ft.start);
                 });
@@ -273,7 +289,6 @@ add_pfam_values();
 
 */
 
-
         seqEntry.addFeatures(pfam_fts.map(function(ft) {
             return {
                 category : 'pfam',
@@ -287,6 +302,20 @@ add_pfam_values();
         }));
 
 
+        seqEntry.addFeatures(swissprot_fts.map(function(ft) {
+            return {
+                category : 'swissprot',
+                type : 'swissprot_type',
+                start : ft[1]-1,
+                end : ft[2]-1,
+                text : '',
+                inner_text : ft[3],
+                count: 2,
+            }
+        }));
+
+
+
             seqEntry.addFeatures([{
                 category : 'variation',
                 type : 'mickey',
@@ -298,15 +327,23 @@ add_pfam_values();
 
 
 
-            pviz.FeatureDisplayer.addMouseoverCallback(['pfam_type'], function(ft) {
+            pviz.FeatureDisplayer.addMouseoverCallback(['pfam_type','swissprot_type'], function(ft) {
                 mouseOveredFT = ft;
                 var el = $('#output-mouse-over');
                 el.empty();
                 el.html('<pre>' + 
 
-                
-                JSON.stringify(ft.inner_text)+'{{ resi_num }}'
+               
 
+                ft.inner_text + '<br>' +
+                'start: ' + ft.start + '<br>' +
+                'end: ' + ft.end
+
+                
+
+                
+                //+'{{ resi_num }}'
+                //'<a href="http://pfam.xfam.org/family/"
 
                 +'</pre>')
             }).addMouseoutCallback(['pfam_type'], function(ft) {
@@ -329,9 +366,10 @@ add_pfam_values();
 
             <div class="col-lg-6">
                 {% if pdb_entry != None %}
-                <div style="height: 500px; width: 500px" class='viewer_3Dmoljs' data-pdb='{{ pdb_entry }}' data-backgroundcolor='white' data-style='cartoon:color=spectrum' data-select1={{ resi_string }} data-labelres1='backgroundOpacity:0.8;fontSize:14'></div>
+                <div style="height: 500px; width: 500px" class='viewer_3Dmoljs' data-pdb='{{ pdb_entry }}' data-backgroundcolor='white' data-style='cartoon:color=spectrum' data-select1={{ resi_string }} data-labelres1='backgroundOpacity:0.8;fontSize:14' 
+data-style1='stick'></div>
 
-<p> Citation: {{ pdb_list.2 }} </p>
+<p> <b>Citation:</b> {{ pdb_list.2 }} </p>
 <br>
             <p> View RCSB PDB entry <a href='http://www.rcsb.org/pdb/explore/explore.do?structureId={{ pdb_entry }}'>here</a> </p>
 
@@ -394,17 +432,43 @@ add_pfam_values();
                 </tr>
                 </table> -->
                 <div class='col-lg-6'>
-                <p> <b>chromosome location: </b> {{ brca1_object.hg19_chr }}.{{ brca1_object.hg19_pos }} </p>
-                <p> <b>variation location:</b> {{ brca1_object.varlocation }}</p>
-                <p> <b>amino acid change:</b> {{ brca1_object.hgvs_cdna }}</p>
-                <p> <b>protein change:</b> {{ brca1_object.hgvs_prot }}</p>
+                <table class='table'>
+                <tr>
+                    <td> <b>chromosome location: </b> </td>
+                    <td> {{ brca1_object.hg19_chr }}.{{ brca1_object.hg19_pos }} </td>
+                </tr>
+                <tr>
+                    <td> <b>variation location:</b> </td>
+                    <td> {{ brca1_object.varlocation }}</td>
+                </tr>
+                <tr>
+                    <td> <b>amino acid change:</b> </td>
+                    <td> {{ brca1_object.hgvs_cdna }}</td>
+                </tr>
+                <tr>
+                    <td> <b>protein change:</b> </td>
+                    <td> {{ brca1_object.hgvs_prot }}</td>
+                </tr>
+                <tr>
+                    <td> <b>protein domain 1:</b> </td>
+                    <td> {{ brca1_object.alamut_proteindomain1 }}</td>
+                </tr>
                 {% if brca1_object.swissprot_type != '' %}
-                <p> <b>swissprot type:</b> {{ brca1_object.swissprot_type }}</p>
+                <tr>
+                    <td> <b>swissprot type:</b> </td>
+                    <td> {{ brca1_object.swissprot_type }}</td>
+                </tr>
                 {% endif %}
                 {% if brca1_object.hgmd_acc != '' %}
-
-                <p> <b>HGMD accession number:</b> {{ brca1_object.hgmd_acc }} </p>
+                <tr>
+                <td> <b>HGMD accession number:</b> </td>
+                <td> {{ brca1_object.hgmd_acc }} </td>
+                </tr>
                 {% endif %}
+
+<!-- add overlapping domains ?? -->
+                
+                </table>
                 {% if hgmd_pubmed_list != None %}
  
                 <p> <b> PubMed Citations: </b> 
@@ -419,20 +483,124 @@ add_pfam_values();
 
 <div class='col-lg-6'>
 
-
 {% if brca1_object1.alamut_siftprediction != '' %}
 
-<p> <b>SIFT prediction: </b> {{ brca1_object.alamut_siftprediction }} </p> 
-<p> <b>SIFT weight: </b> {{ brca1_object.alamut_siftweight }} </p>
-<p> <b>SIFT median: </b> {{ brca1_object.alamut_siftmedian }} </p>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          
+        <canvas id='sift_circle' width='16' height='16'> </canvas> <b>SIFT</b>
+      
+        </h4>
+      </div>
+      
+        <div class="panel-body">
+<div class='row'>
+<div class='col-sm-4'>
+<p style='text-align:center'><b>prediction </b></p> </div>
+<div class='col-sm-4'>
+<p style='text-align:center'><b>weight </b></p>  </div>
+<div class='col-sm-4'>
+<p style='text-align:center'><b>median </b></p>  </div>
+</div>
+<div class='row'>
+<div class='col-sm-4'>
+<p style='text-align:center'>{{ brca1_object.alamut_siftprediction }}</p> </div>
+<div class='col-sm-4'>
+<p style='text-align:center'>{{ brca1_object.alamut_siftweight }}</p> </div>
+<div class='col-sm-4'>
+<p style='text-align:center'>{{ brca1_object.alamut_siftmedian }}</p> </div>
+</div>
+
+
+</div>
+      </div>
+  
 
 {% endif %}
 
 {% if brca1_object.alamut_mappprediction != '' %}
-<p> <b>MAPP prediction: </b> {{ brca1_object.alamut_mappprediction }}</p>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          
+        <canvas id='mapp_circle' width='16' height='16'> </canvas> <b>MAPP</b>
+      
+        </h4>
+      </div>
+      
+        <div class="panel-body">
+<div class='row'>
+<div class='col-sm-4'>
+<p style='text-align:center'><b>prediction </b></p> </div>
+<div class='col-sm-4'>
+<p style='text-align:center'><b>p-value </b></p>  </div>
+<div class='col-sm-4'>
+<p style='text-align:center'><b>p-value median </b></p>  </div>
+</div>
+<div class='row'>
+<div class='col-sm-4'>
+<p style='text-align:center'>{{ brca1_object.alamut_mappprediction }}</p> </div>
+<div class='col-sm-4'>
+<p style='text-align:center'>{{ brca1_object.alamut_mapppvalue }}</p> </div>
+<div class='col-sm-4'>
+<p style='text-align:center'>{{ brca1_object.alamut_mapppvaluemedian }}</p> </div>
+</div>
+
+
+</div>
+      </div>
 
 
 {% endif %}
+
+{% if brca1_object.polyphen2_hvar_prediction != '' %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          
+        <canvas id='polyphen_circle' width='16' height='16'> </canvas> <b>PolyPhen2</b>
+      
+        </h4>
+      </div>
+      
+        <div class="panel-body">
+<div class='row'>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>prediction </b></p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>class </b></p>  </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>prob </b></p>  </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>fpr </b></p>  </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>tpr </b></p>  </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>fdr </b></p>  </div>
+</div>
+<div class='row'>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_prediction }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_class }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_prob }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_fpr }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_tpr }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_fdr }}</p> </div>
+</div>
+
+
+</div>
+      </div>
+  </div>
+
+{% endif %}
+
 
 {% if brca1_object.muttaster_prediction != '' %}
 <p> <b>muttaster prediction: </b> {{ brca1_object.muttaster_prediction }}</p>
@@ -454,7 +622,9 @@ add_pfam_values();
 
 {% endif %}
 
-<canvas id='circle_test' width='16' height='16'> </canvas>
+<p> <b> SuSPect Score: </b> {{ brca1_object.suspect_score }} </p>
+
+
 
 </div>
 
@@ -469,9 +639,16 @@ add_pfam_values();
 
 <script>
 
-var c = document.getElementById('circle_test');
+var c = document.getElementById('sift_circle');
 var ctx = c.getContext('2d');
+{% if brca1_object.alamut_siftprediction == 'Deleterious' %}
 ctx.fillStyle='red'; //change fillstyle based on value of prediction
+{% elif  brca1_object.alamut_siftprediction == 'Tolerated'%}
+ctx.fillStyle='green';
+{% else %}
+ctx.fillStyle='purple';
+
+{% endif %}
 
  function drawCircle(context,fill){
         context.beginPath();
@@ -485,17 +662,53 @@ ctx.fillStyle='red'; //change fillstyle based on value of prediction
 
 drawCircle(ctx,true)
 
-</script>
 
+</script>
+<script>
+var c = document.getElementById('mapp_circle');
+var ctx = c.getContext('2d');
+{% if brca1_object.alamut_mappprediction == 'bad' %}
+ctx.fillStyle='red'; //change fillstyle based on value of prediction
+{% elif  brca1_object.alamut_mappprediction == 'good'%}
+ctx.fillStyle='green';
+{% else %}
+ctx.fillStyle='purple';
+
+{% endif %}
+
+drawCircle(ctx,true)
+
+</script>
+<script>
+var c = document.getElementById('polyphen_circle');
+var ctx = c.getContext('2d');
+{% if brca1_object.polyphen2_hvar_class == 'deleterious' %}
+ctx.fillStyle='red'; //change fillstyle based on value of prediction
+{% elif  brca1_object.polyphen2_hvar_class == 'neutral'%}
+ctx.fillStyle='green';
+{% else %}
+ctx.fillStyle='purple';
+
+{% endif %}
+
+drawCircle(ctx,true)
+
+</script>
 <script>
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
 });
 
+
+
+
+
 (function($){
 
     $(document).ready(function (){
             $('.dropdown-toggle').dropdown();
+            
+
     });
 
 })(jQuery);

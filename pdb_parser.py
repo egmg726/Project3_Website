@@ -6,17 +6,19 @@ import xml.etree.ElementTree as ET
 
 parser = PDBParser()
 pdbl = PDBList()
-structure = parser.get_structure('4igk','4IGK.pdb')
+structure = parser.get_structure('4igk','p3_website/p3_app/static/p3_app/pdb_files/1JM7.pdb')
 #structure = pdbl.retrieve_pdb_file('1JM7')
 residues = structure.get_residues()
 compound = structure.header['compound']
 title = structure.header['name']
 journal = structure.header['journal_reference']
 dict_keys = ['synonym','chain','fragment','molecule']
-start_pos,end_pos = compound['1']['fragment'].split('unp residues ')[1].split('-')
-start_pos = int(start_pos)
-end_pos = int(end_pos)
-print compound['1']['synonym']
+print compound
+if 'unp residues' in compound['1']:
+    start_pos,end_pos = compound['1']['fragment'].split('unp residues ')[1].split('-')
+    start_pos = int(start_pos)
+    end_pos = int(end_pos)
+print journal.split()
 pdb_dict = {}
 
 for comp in range(0,len(compound)):

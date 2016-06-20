@@ -126,6 +126,8 @@ def index(request):
         count = 0
         match_dict = {}
 
+        resi_in_domain = None
+
         for child in root.iter('match'):
             type_attr = child.attrib['type']
             acc_attr = child.attrib['accession']
@@ -134,11 +136,17 @@ def index(request):
             for grandchild in child.iter('location'):
                 start = grandchild.attrib['start']
                 end = grandchild.attrib['end']
-                match_dict[count] = [type_attr,acc_attr,id_attr,int(start),int(end)]
+                start = int(start)
+                end = int(end)
+                if resi_num > end and resi_num < start:
+                     resi_in_domain = id_attr
+                match_dict[count] = [type_attr,acc_attr,id_attr,start,end]
                 count += 1
 
         for seq in root.iter('sequence'):
             sequence = seq.text
+
+        
 
         #additional pfam info for mouseover feature
 
@@ -147,9 +155,46 @@ def index(request):
         else:
             hgmd_pubmed_list = None
                 
+        #add info for pubmed list - turn into dictionary of citation values
+
+        #add checkpoint to make sure residues match of pdb file and residue of variation in database
+        #Brca1New.objects.values('swissprot_type').distinct()
+        
+        count = 0
+        swissprot_dict = {}
+        for sp_ran in Brca1New.objects.values_list('swissprot_range').distinct():
+            sp_ran = ''.join(sp_ran)
+            obj = Brca1New.objects.filter(swissprot_range=sp_ran)[0]
+            sp_type = obj.swissprot_type.encode('ascii')
+            sp_desc = obj.swissprot_desc.encode('ascii')
+            if sp_desc == '':
+                continue
+            
+            sp_ran = sp_ran.split('[')[1].split(']')[0]
+            
+            if '-' in sp_ran:
+                start,end = sp_ran.split('-')
+                start = int(start)
+                end = int(end)
+            else:
+                start = int(sp_ran)
+                end = int(sp_ran)
+            
+            swissprot_dict[count] = [sp_type,start,end,sp_desc]
+            count += 1
+        
+        count = 0
+        alamut_dict = {}
+        for ala_dom in Brca1New.objects.values_list('alamut_proteindomain1'):
+            ala_dom = ''.join(ala_dom)
+            return HttpResponse(ala_dom)            
 
 
-        context = {'rsid':rsid, 'brca1_object':brca1_object,'resi_string':resi_string, 'resi_num':resi_num, 'pdb_entry':pdb_entry, 'chr_num':chr_num,'chr_loc':chr_loc, 'pdb_list':pdb_list, 'match_dict':match_dict, 'sequence':sequence, 'hgmd_pubmed_list':hgmd_pubmed_list}
+
+        if brca1_object.muttaster_features != '':
+            brca1_object.muttaster_features = brca1_object.muttaster_features.split(',')
+
+        context = {'rsid':rsid, 'brca1_object':brca1_object,'resi_string':resi_string, 'resi_num':resi_num, 'pdb_entry':pdb_entry, 'chr_num':chr_num,'chr_loc':chr_loc, 'pdb_list':pdb_list, 'match_dict':match_dict, 'sequence':sequence, 'hgmd_pubmed_list':hgmd_pubmed_list, 'swissprot_dict':swissprot_dict}
         return render(request,'p3_app/results_page2.html',context)
 
     return render(request,'p3_app/index.html',{})

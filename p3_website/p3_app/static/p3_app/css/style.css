@@ -29,3 +29,22 @@ circle.variation.mickey:hover {
             
            
         }
+
+        g.feature.swissprot rect.feature {
+            fill: #45A4D2;
+            fill-opacity: 0.8;
+            
+            
+        }
+        g.feature.swissprot:hover rect.feature {
+            fill: #45A4D2;
+            fill-opacity: 0.2;
+            
+           
+        }
+
+
+tr:hover {
+    color: black;
+
+}
