@@ -218,7 +218,7 @@ pviz.FeatureDisplayer.setCustomHandler('mickey', {
 
             positioner : function(viewport, d3selection) {
                     d3selection.attr('transform', function(ft, i) {
-                        return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.1 + ft.displayTrack) + ')';
+                        return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.5 + ft.displayTrack) + ')';
                     });
                     return d3selection
                 }
@@ -252,6 +252,47 @@ add_pfam_values();
 
 add_swissprot_values();
 
+
+    var alamut_pd1_fts = [];
+    function add_alamut_pd1_values(){
+    {% for keys, values in alamut_pd1_dict.items %}
+    alamut_pd1_fts.push(['{{ values.0 }}','{{ values.1 }}','{{ values.2 }}'])
+
+    {% endfor %}
+};
+
+add_alamut_pd1_values();
+
+    var alamut_pd2_fts = [];
+    function add_alamut_pd2_values(){
+    {% for keys, values in alamut_pd2_dict.items %}
+    alamut_pd2_fts.push(['{{ values.0 }}','{{ values.1 }}','{{ values.2 }}'])
+
+    {% endfor %}
+};
+
+add_alamut_pd2_values();
+
+    var alamut_pd3_fts = [];
+    function add_alamut_pd3_values(){
+    {% for keys, values in alamut_pd3_dict.items %}
+    alamut_pd3_fts.push(['{{ values.0 }}','{{ values.1 }}','{{ values.2 }}'])
+
+    {% endfor %}
+};
+
+add_alamut_pd3_values();
+
+
+    var alamut_pd4_fts = [];
+    function add_alamut_pd4_values(){
+    {% for keys, values in alamut_pd4_dict.items %}
+    alamut_pd4_fts.push(['{{ values.0 }}','{{ values.1 }}','{{ values.2 }}'])
+
+    {% endfor %}
+};
+
+add_alamut_pd4_values();
 
 /*
 
@@ -295,12 +336,13 @@ add_swissprot_values();
                 type : 'pfam_type',
                 start : ft[0]-1,
                 end : ft[1]-1,
+                inner_start : ft[0],
+                inner_end : ft[1],
                 text : '',
                 inner_text : ft[2],
                 count: 2,
             }
         }));
-
 
         seqEntry.addFeatures(swissprot_fts.map(function(ft) {
             return {
@@ -310,10 +352,67 @@ add_swissprot_values();
                 end : ft[2]-1,
                 text : '',
                 inner_text : ft[3],
+                inner_start : ft[1],
+                inner_end : ft[2],
                 count: 2,
             }
         }));
 
+        seqEntry.addFeatures(alamut_pd1_fts.map(function(ft) {
+            return {
+                category : 'alamut',
+                type : 'alamut_pd1_type',
+                start : ft[1]-1,
+                end : ft[2]-1,
+                text : '',
+                inner_text : ft[0],
+                inner_start : ft[1],
+                inner_end : ft[2],
+                
+            }
+        }));
+
+        seqEntry.addFeatures(alamut_pd2_fts.map(function(ft) {
+            return {
+                category : 'alamut',
+                type : 'alamut_pd2_type',
+                start : ft[1]-1,
+                end : ft[2]-1,
+                inner_start : ft[1],
+                inner_end : ft[2],
+                text : '',
+                inner_text : ft[0],
+                
+            }
+        }));
+
+        seqEntry.addFeatures(alamut_pd3_fts.map(function(ft) {
+            return {
+                category : 'alamut',
+                type : 'alamut_pd3_type',
+                start : ft[1]-1,
+                end : ft[2]-1,
+                inner_start : ft[1],
+                inner_end : ft[2],
+                text : '',
+                inner_text : ft[0],
+                
+            }
+        }));
+
+        seqEntry.addFeatures(alamut_pd4_fts.map(function(ft) {
+            return {
+                category : 'alamut',
+                type : 'alamut_pd4_type',
+                start : ft[1]-1,
+                end : ft[2]-1,
+                inner_start : ft[1],
+                inner_end : ft[2],
+                text : '',
+                inner_text : ft[0],
+                
+            }
+        }));
 
 
             seqEntry.addFeatures([{
@@ -327,7 +426,7 @@ add_swissprot_values();
 
 
 
-            pviz.FeatureDisplayer.addMouseoverCallback(['pfam_type','swissprot_type'], function(ft) {
+            pviz.FeatureDisplayer.addMouseoverCallback(['pfam_type','swissprot_type','alamut_pd1_type','alamut_pd2_type','alamut_pd3_type','alamut_pd4_type'], function(ft) {
                 mouseOveredFT = ft;
                 var el = $('#output-mouse-over');
                 el.empty();
@@ -336,8 +435,8 @@ add_swissprot_values();
                
 
                 ft.inner_text + '<br>' +
-                'start: ' + ft.start + '<br>' +
-                'end: ' + ft.end
+                'start: ' + ft.inner_start + '<br>' +
+                'end: ' + ft.inner_end
 
                 
 
@@ -365,17 +464,17 @@ add_swissprot_values();
 <!-- need to change data-pdb so that it accesses static files -->
 
             <div class="col-lg-6">
-                {% if pdb_entry != None %}
+                {% if pdb_entry != None %}<div style='margin:auto;display:block'>
                 <div style="height: 500px; width: 500px" class='viewer_3Dmoljs' data-pdb='{{ pdb_entry }}' data-backgroundcolor='white' data-style='cartoon:color=spectrum' data-select1={{ resi_string }} data-labelres1='backgroundOpacity:0.8;fontSize:14' 
-data-style1='line'></div>
+data-style1='stick'></div></div>
 
-<p> <b>Citation:</b> {{ pdb_list.2 }} </p>
+<p> <b>Citation:</b> {{ pdb_list.2|upper }} </p>
 <br>
             <p> View RCSB PDB entry <a href='http://www.rcsb.org/pdb/explore/explore.do?structureId={{ pdb_entry }}'>here</a> </p>
 
 </div> <div class="col-lg-6">
 
-    <h4><b>{{ pdb_list.1 }}</b></h4> 
+    <h4><b>{{ pdb_list.1|upper }}</b></h4> 
 
     {% for keys,values in pdb_list.0.items %}
     <p> substructure {{ keys }} </p>
@@ -450,13 +549,17 @@ data-style1='line'></div>
                     <td> {{ brca1_object.hgvs_prot }}</td>
                 </tr>
                 <tr>
-                    <td> <b>protein domain 1:</b> </td>
-                    <td> {{ brca1_object.alamut_proteindomain1 }}</td>
+                    <td> <b>alamut protein domains:</b> </td>
+                    <td> <li style='list-style-type:none'> {{ brca1_object.alamut_proteindomain1 }}</li>
+                        <li style='list-style-type:none'> {{ brca1_object.alamut_proteindomain2 }}</li>
+                    <li style='list-style-type:none'>{{ brca1_object.alamut_proteindomain3 }}</li>
+                    <li style='list-style-type:none'>{{ brca1_object.alamut_proteindomain4 }}</li>
+                    </td>
                 </tr>
                 {% if brca1_object.swissprot_type != '' %}
                 <tr>
-                    <td> <b>swissprot type:</b> </td>
-                    <td> {{ brca1_object.swissprot_type }}</td>
+                    <td> <b>swissprot {{ brca1_object.swissprot_type|lower }}:</b> </td>
+                    <td> {{ brca1_object.swissprot_desc }}</td>
                 </tr>
                 {% endif %}
                 {% if brca1_object.hgmd_acc != '' %}
@@ -471,19 +574,116 @@ data-style1='line'></div>
                 </table>
                 {% if hgmd_pubmed_list != None %}
  
-                <p> <b> PubMed Citations: </b> 
+                <p> <b> PubMed Citations: </b> </p>
                 {% for pmid in hgmd_pubmed_list %}
 
-                {{ pmid }} 
+                {% for keys,values in pubmed_dict.items %}
+                {% if keys == pmid %}
 
-                {% endfor %} </p>
+                
+                <p>{% for author in values.AuthorList %}
+                {{ author }},
+                
+                {% endfor %}
+                {{ values.LastAuthor }}. 
+                <a href='http://www.ncbi.nlm.nih.gov/pubmed/{{ keys }}'>{{ values.Title }}</a>
+                <i>{{ values.Source }}</i> <b>{{ values.Volume }}</b>, 
+                {{ values.Pages }} ({{ values.PubDate }}). 
+
+            </p>
 
                 {% endif %}
+                {% endfor %}
+
+                {% endfor %} 
+                {% endif %}
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          
+         <b>Mutation Taster</b>
+      
+        </h4>
+      </div>
+      
+        <div class="panel-body">
+
+{% if brca1_object.muttaster_prediction != '' %}
+<p> <b>prediction: </b> {{ brca1_object.muttaster_prediction }}</p>
+{% if brca1_object.muttaster_features != '' %}
+<p> <b> features: </b>
+{% for feature in brca1_object.muttaster_features %}
+<li style='padding-left:20px;list-style-type:none'> {{ feature }} </li>
+
+{% endfor %}
+</p>
+{% endif %}
+
+{% endif %}
+
+
+</div>
+      </div>
+
+{% if brca1_object.alamut_agvgdclass != '' %}
+<div class="panel panel-default">
+  <div class="panel-heading"> <h4 class='panel-title'>
+<svg width="16" height="16">
+<circle cx="8" cy="8" r="5" stroke="black" stroke-width="1" fill="rgb(155,0,155)" />
+</svg>
+<b> Align-GVGD:</b> Class {{ brca1_object.alamut_agvgdclass }}</h4>
+
+</div>
+  <div class="panel-body">
+
+          
+        
+
+<div style='text-align:center'>
+<p>likelihood of interfering with function</p>
+ <svg width="403" height="100">
+  <defs>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:rgb(0,255,0);stop-opacity:1" />
+      <stop offset="100%" style="stop-color:rgb(40,40,40);stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect x="3" y="20" rx="20" ry="20" width="400" height="50" fill='url(#grad2)'
+  style="stroke:black;stroke-width:2;opacity:0.8" />
+    {% for keys,values in agvgd_dict.items %}
+
+    {% if keys == brca1_object.alamut_agvgdclass %}
+  <line x1="{{ values }}" y1="20" x2="{{ values }}" y2="70" style="stroke:black;stroke-width:8" />
+    {% endif %}
+
+    {% endfor %}
+    <text x="3" y="85" fill="black">less likely</text>
+    <text x="326" y="85" fill="black">most likely</text>
+    <text x="20" y="15" fill="black">C0</text>
+    <text x="77" y="15" fill="black">C15</text>
+    <text x="133" y="15" fill="black">C25</text>
+    <text x="190" y="15" fill="black">C35</text>
+    <text x="246" y="15" fill="black">C45</text>
+    <text x="302" y="15" fill="black">C55</text>
+    <text x="360" y="15" fill="black">C65</text>
+
+
+</svg> 
+</div>
+</div>
+
+</div>
+{% endif %}
+
+
     </div>
 
 <div class='col-lg-6'>
 
-{% if brca1_object1.alamut_siftprediction != '' %}
+
+
+{% if brca1_object.alamut_siftprediction != None %}
 
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -554,6 +754,42 @@ data-style1='line'></div>
 
 {% endif %}
 
+
+<div class="panel panel-default">
+  <div class="panel-heading"> <h4 class='panel-title'>
+<svg width="16" height="16">
+<circle cx="8" cy="8" r="5" stroke="black" stroke-width="1" fill="rgb(155,0,155)" />
+</svg>
+<b> SuSPect Score: </b> {{ brca1_object.suspect_score }} </h4>
+
+</div>
+  <div class="panel-body">
+
+          
+        
+
+<div style='text-align:center'>
+ <svg width="403" height="100">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:rgb(0,0,255);stop-opacity:1" />
+      <stop offset="100%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect x="3" y="20" rx="20" ry="20" width="400" height="50" fill='url(#grad1)'
+  style="stroke:black;stroke-width:2;opacity:0.8" />
+
+  <line x1="{{ ss_img_loc }}" y1="20" x2="{{ ss_img_loc }}" y2="70" style="stroke:black;stroke-width:8" />
+    <text x="3" y="85" fill="black">neutral</text>
+    <text x="326" y="85" fill="black">deleterious</text>
+
+</svg> 
+</div>
+</div>
+
+</div>
+
+
 {% if brca1_object.polyphen2_hvar_prediction != '' %}
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -565,6 +801,40 @@ data-style1='line'></div>
       </div>
       
         <div class="panel-body">
+<p> prediction based on {{ brca1_object.polyphen2_based_on }}: {{ brca1_object.polyphen2_prediction }} </p> 
+<h5 style='text-align:center'> HumDiv </h5>
+<div class='row'>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>prediction </b></p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>class </b></p>  </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>prob </b></p>  </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>fpr </b></p>  </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>tpr </b></p>  </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>fdr </b></p>  </div>
+</div>
+<div class='row'>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_prediction }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_class }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_prob }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_fpr }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_tpr }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_fdr }}</p> </div>
+
+</div> <!-- end row -->
+
+
+<h5 style='text-align:center'> HumVar </h5>
 <div class='row'>
 <div class='col-sm-2'>
 <p style='text-align:center'><b>prediction </b></p> </div>
@@ -595,6 +865,7 @@ data-style1='line'></div>
 </div>
 
 
+
 </div>
       </div>
   </div>
@@ -602,18 +873,7 @@ data-style1='line'></div>
 {% endif %}
 
 
-{% if brca1_object.muttaster_prediction != '' %}
-<p> <b>muttaster prediction: </b> {{ brca1_object.muttaster_prediction }}</p>
-{% if brca1_object.muttaster_features != '' %}
-<p> <b> muttaster features: </b>
-{% for feature in brca1_object.muttaster_features %}
-<li> {{ feature }} </li>
 
-{% endfor %}
-</p>
-{% endif %}
-
-{% endif %}
 
 
 {% if brca1_object.polyphen2_prediction != '' %}
@@ -622,7 +882,7 @@ data-style1='line'></div>
 
 {% endif %}
 
-<p> <b> SuSPect Score: </b> {{ brca1_object.suspect_score }} </p>
+
 
 
 

@@ -13,6 +13,7 @@ import os
 
 from .forms import RsForm
 from .models import *
+from pmid_dict import *
 
 def index(request):
     errors = []
@@ -114,6 +115,8 @@ def index(request):
         else:
             pdb_list = []
 
+        #create a list of synonyms and fragments so they're properly capitalized for site
+
         pfam_id = 'P38398'
 
         #create dictionary for uniprot/gene names when all gene names are present
@@ -154,6 +157,14 @@ def index(request):
             hgmd_pubmed_list = brca1_object.hgmd_pubmed_list.split(' ')
         else:
             hgmd_pubmed_list = None
+
+        pubmed_dict = {}
+        if hgmd_pubmed_list is not None:
+            for pmid in hgmd_pubmed_list:
+                if pmid in pmid_dict.keys():
+                    pubmed_dict[pmid] = pmid_dict[pmid]
+
+
                 
         #add info for pubmed list - turn into dictionary of citation values
 
@@ -184,17 +195,149 @@ def index(request):
             count += 1
         
         count = 0
-        alamut_dict = {}
+        alamut_pd1_dict = {}
         ala_list = []
+        ala_indices = []
+        cdna_pos_list = []
+        end = 0
+
         for ala_dom in Brca1New.objects.values_list('alamut_proteindomain1'):
             ala_dom = ''.join(ala_dom)
             ala_list.append(ala_dom)
-                        
+
+        for cdna_pos in Brca1New.objects.values_list('codon'):
+            cdna_pos = ''.join(cdna_pos)
+            cdna_pos_list.append(cdna_pos)
+        
+        for ala_ind in range(1,len(ala_list)):
+            if ala_list[ala_ind-1] == ala_list[ala_ind]:
+                continue
+            else:
+               # if ala_list[ala_ind-1] == '':
+               #     continue
+
+                if end == 0:
+                    for ai in range(1,len(ala_list)):
+                        if ala_list[ai] == ala_list[ala_ind-1]:
+                            start = int(cdna_pos_list[ai])
+                            break
+                            
+                else:
+                    start = end+1
+
+                end = int(cdna_pos_list[ala_ind])
+                domain = ala_list[ala_ind-1]
+                if domain != '':
+                    alamut_pd1_dict[count] = [domain,start,end]
+                    count += 1
+
+        ala_list = []
+        alamut_pd2_dict = {}
+        end = 0
+        count = 0
+        for ala_dom in Brca1New.objects.values_list('alamut_proteindomain2'):
+            ala_dom = ''.join(ala_dom)
+            ala_list.append(ala_dom)
+        
+        for ala_ind in range(1,len(ala_list)):
+            if ala_list[ala_ind-1] == ala_list[ala_ind]:
+                continue
+            else:
+               # if ala_list[ala_ind-1] == '':
+               #     continue
+
+                if end == 0:
+                    for ai in range(1,len(ala_list)):
+                        if ala_list[ai] == ala_list[ala_ind-1]:
+                            start = int(cdna_pos_list[ai])
+                            break
+                else:
+                    start = end+1
+
+                end = int(cdna_pos_list[ala_ind])
+                domain = ala_list[ala_ind-1]
+                if domain != '':
+                    alamut_pd2_dict[count] = [domain,start,end]
+                    count += 1                
+
+        ala_list = []
+        alamut_pd3_dict = {}
+        end = 0
+        count = 0
+        for ala_dom in Brca1New.objects.values_list('alamut_proteindomain3'):
+            ala_dom = ''.join(ala_dom)
+            ala_list.append(ala_dom)
+        
+        for ala_ind in range(1,len(ala_list)):
+            if ala_list[ala_ind-1] == ala_list[ala_ind]:
+                continue
+            else:
+               # if ala_list[ala_ind-1] == '':
+               #     continue
+
+                if end == 0:
+                    for ai in range(1,len(ala_list)):
+                        if ala_list[ai] == ala_list[ala_ind-1]:
+                            start = int(cdna_pos_list[ai])
+                            break
+                else:
+                    start = end+1
+
+                end = int(cdna_pos_list[ala_ind])
+                domain = ala_list[ala_ind-1]
+                if domain != '':
+                    alamut_pd3_dict[count] = [domain,start,end]
+                    count += 1                
+
+
+                #make condition if last entry is part of a domain
+        ala_list = []
+        alamut_pd4_dict = {}
+        end = 0
+        count = 0
+        for ala_dom in Brca1New.objects.values_list('alamut_proteindomain4'):
+            ala_dom = ''.join(ala_dom)
+            ala_list.append(ala_dom)
+        
+        for ala_ind in range(1,len(ala_list)):
+            if ala_list[ala_ind-1] == ala_list[ala_ind]:
+                continue
+            else:
+               # if ala_list[ala_ind-1] == '':
+               #     continue
+
+                if end == 0:
+                    for ai in range(1,len(ala_list)):
+                        if ala_list[ai] == ala_list[ala_ind-1]:
+                            start = int(cdna_pos_list[ai])
+                            break
+                else:
+                    start = end+1
+
+                end = int(cdna_pos_list[ala_ind])
+                domain = ala_list[ala_ind-1]
+                if domain != '':
+                    alamut_pd4_dict[count] = [domain,start,end]
+                    count += 1                
+                  
+
+
+        if brca1_object.alamut_siftprediction == '':
+            brca1_object.alamut_siftprediction = None
+
+        if '_' in brca1_object.muttaster_prediction:
+            brca1_object.muttaster_prediction = brca1_object.muttaster_prediction.replace('_',' ')
 
         if brca1_object.muttaster_features != '':
             brca1_object.muttaster_features = brca1_object.muttaster_features.split(',')
 
-        context = {'rsid':rsid, 'brca1_object':brca1_object,'resi_string':resi_string, 'resi_num':resi_num, 'pdb_entry':pdb_entry, 'chr_num':chr_num,'chr_loc':chr_loc, 'pdb_list':pdb_list, 'match_dict':match_dict, 'sequence':sequence, 'hgmd_pubmed_list':hgmd_pubmed_list, 'swissprot_dict':swissprot_dict}
+        ss_img_loc = int(brca1_object.suspect_score)*4
+        agvgd_dict = {'C0': 35, 'C15': 92, 'C25':148, 'C35':205,'C45':261,'C55':317,'C65':375} 
+
+        context = {'rsid':rsid, 'brca1_object':brca1_object,'resi_string':resi_string, 'resi_num':resi_num, 'pdb_entry':pdb_entry, 'chr_num':chr_num,'chr_loc':chr_loc, 'pdb_list':pdb_list, 'match_dict':match_dict, 'sequence':sequence, 'hgmd_pubmed_list':hgmd_pubmed_list, 'swissprot_dict':swissprot_dict, 'alamut_pd1_dict':alamut_pd1_dict,'alamut_pd2_dict':alamut_pd2_dict,'alamut_pd3_dict':alamut_pd3_dict,
+'alamut_pd4_dict':alamut_pd4_dict,'agvgd_dict':agvgd_dict,
+'ss_img_loc':ss_img_loc, 
+'pubmed_dict':pubmed_dict}
         return render(request,'p3_app/results_page2.html',context)
 
     return render(request,'p3_app/index.html',{})

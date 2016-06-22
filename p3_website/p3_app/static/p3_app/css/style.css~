@@ -1,10 +1,10 @@
 circle.variation.mickey {
-       fill: green;
-       fill-opacity: 0.6;
+       fill: #E59A27;
+       fill-opacity: 0.8;
 }
 
 circle.variation.mickey:hover {
-       fill: green;
+       fill: #E59A27;
        fill-opacity: 0.2;
 }
 
@@ -29,6 +29,33 @@ circle.variation.mickey:hover {
             
            
         }
+
+        g.feature.swissprot rect.feature {
+            fill: #45A4D2;
+            fill-opacity: 0.8;
+            
+            
+        }
+        g.feature.swissprot:hover rect.feature {
+            fill: #45A4D2;
+            fill-opacity: 0.2;
+            
+           
+        }
+
+        g.feature.alamut_pd1 rect.feature {
+            fill: green;
+            fill-opacity: 0.8;
+            
+            
+        }
+        g.feature.alamut_pd1:hover rect.feature {
+            fill: green;
+            fill-opacity: 0.2;
+            
+           
+        }
+
 
 tr:hover {
     color: black;
