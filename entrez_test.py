@@ -28,3 +28,5 @@ print gene_dict
 #print gene_dict['Description']
 #print gene_dict['Summary']
 
+with open('gene_dict.py','w') as text_file:
+    text_file.write('gene_dict = '+str(gene_dict))

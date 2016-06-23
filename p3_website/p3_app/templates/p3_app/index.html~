@@ -170,11 +170,12 @@
             
 
                 <h1 class="page-header">
-                    Choose one of two search methods
+                    Choose one of three search methods
                 </h1>
             </div>
 
 	<div class="col-md-6">
+
                     <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4><i class="fa fa-fw fa-check"></i> Enter SNP Details Below:</h4>
@@ -211,7 +212,48 @@
 	</div>
 	</form>
                 </div>
-            </div> </div>
+            </div> 
+
+                    <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-fw fa-check"></i> Enter Protein Change Details Below:</h4>
+                    </div>
+                    <div class="panel-body">
+	<form action='' class='form-horizontal' role='form' method='post'>
+	{% csrf_token %}
+	<div class='form-group'>
+	    <label class="control-label col-sm-5" for="protein_id">Gene/Protein ID:</label>
+		<div class='col-sm-5'>
+    	    <input type="text" class="form-control" id="protein_id" name="protein_id">
+<p> <i>ex. BRCA1</i> </p>
+		</div> </div>
+<div class='form-group'>
+	    <label class="control-label col-sm-5" for="aa_change">Amino Acid Change:</label>
+		<div class='col-sm-5'>
+    	    <input type="text" class="form-control" id="aa_change" name="aa_change">
+<p> <i>Enter your input in HGVS format (ex. M1L or Met1Leu)</i> </p>
+		</div> 
+
+          
+</div>
+
+	<div class="col-sm-offset-5 col-sm-5">
+	<button type="submit" class="btn btn-default">Submit</button>
+    {% if which_error = 'rsid' %}
+	{% for error in errors %}
+	<p><b>{{ error }}</b><p>
+	{% endfor %}
+    {% endif %}
+
+	</div>
+	</form>
+                </div>
+            </div> 
+
+
+
+
+</div> <!-- col-6 -->
 	
 	<div class="col-md-6">
                     <div class="panel panel-default">
@@ -219,6 +261,7 @@
                         <h4><i class="fa fa-fw fa-check"></i> Enter Variation Details Below:</h4>
                     </div>
                     <div class="panel-body">
+    <p><i> Current version uses location from human genome build 37 </i></p>
 	<form action='' class='form-horizontal' role='form' method='post'>
 	{% csrf_token %}
 	<div class='form-group'>

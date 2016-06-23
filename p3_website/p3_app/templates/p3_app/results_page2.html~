@@ -158,10 +158,15 @@ $.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Boot
  
                     {% if rsid != False %}
                     <small>{{ rsid }}</small>
-                    {% else %}
-                    <small>{{ chr_num }}.{{ chr_loc }}
+                    {% elif chr_num != False %}
+                    <small>{{ chr_num }}.{{ chr_loc }} </small>
+                    {% elif protein_id != False %}
+                    <small>{{ protein_id }} - {{ aa_change }} </small>
                     {% if brca1_object.rsid != '' %}
+                    {% if rsid == False %}
+                    <small>
                     ({{ brca1_object.rsid }})
+                    {% endif %}
                     {% endif %}
                     </small>
                     {% endif %}
@@ -178,15 +183,31 @@ $.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Boot
 
 
 <div class="container col-lg-12">
-<h3> Protein Sequence for {{ brca1_object.gene }}</h3>
+<div class='col-lg-8'>
+<h2> Protein Sequence for {{ brca1_object.gene }}</h2>
+<p> <i>Aliases: {{ gene_dict.OtherAliases }} </i></p>
+</div>
+        <div class="col-lg-4" id="output-mouse-over">
+        <div class="panel panel-default"> 
+        <div class='panel-body'>
+    <b>Scroll over the domains for more information.</b> <br><br></div> </div>
+        </div>
 
   <div id="main"></div>
+<br>
       <div class="row">
-        <div class="col-lg-6" id="output-mouse-over">
-        <pre> <b>Scroll over the domains for more information.</b> </pre>
-        </div>
+<!--
         <div class="col-lg-6">
-        <pre> protein info here </pre>
+        <div class="panel panel-default"> 
+        <div class='panel-body'>
+    <b>Placeholder for more protein info</b> </div> </div>
+        </div> -->
+        <div class="col-lg-12">
+        <div class="panel panel-default">
+        <div class='panel-body'>
+        <b>Summary: </b>{{ gene_dict.Summary }}
+
+         </div> </div>
         </div>
         </div>
   <script>
@@ -430,11 +451,11 @@ add_alamut_pd4_values();
                 mouseOveredFT = ft;
                 var el = $('#output-mouse-over');
                 el.empty();
-                el.html('<pre>' + 
+                el.html('<div class="panel panel-default"> <div class="panel-body">' + 
 
                
 
-                ft.inner_text + '<br>' +
+                '<b>'+ft.inner_text+'</b>' + '<br>' +
                 'start: ' + ft.inner_start + '<br>' +
                 'end: ' + ft.inner_end
 
@@ -444,7 +465,7 @@ add_alamut_pd4_values();
                 //+'{{ resi_num }}'
                 //'<a href="http://pfam.xfam.org/family/"
 
-                +'</pre>')
+                +'</div></div>')
             }).addMouseoutCallback(['pfam_type'], function(ft) {
                 mouseOveredFT = undefined;
                 
@@ -503,18 +524,21 @@ data-style1='stick'></div></div>
 <!-- end of row -->
 </div>
             <div class="row col-lg-12">
-                {% if rsid != False %}
-                <h2>{{ rsid }} </h2>
-                {% else %}
-                
-                <h2>{{ chr_num }}.{{ chr_loc }}
-
+                   {% if rsid != False %}
+                    <h2>{{ rsid }}</h2>
+                    {% elif chr_num != False %}
+                    <h2>{{ chr_num }}.{{ chr_loc }} </h2>
+                    {% elif protein_id != False %}
+                    <h2>{{ protein_id }} - {{ aa_change }} </h2>
                     {% if brca1_object.rsid != '' %}
+                    {% if rsid == False %}
+                    <h2>
                     ({{ brca1_object.rsid }})
                     {% endif %}
+                    {% endif %}
+                    </h2>
+                    {% endif %}
 
-                </h2>
-                {% endif %}
                 <!--
                 <table>
                 <tr>
@@ -569,34 +593,10 @@ data-style1='stick'></div></div>
                 </tr>
                 {% endif %}
 
-<!-- add overlapping domains ?? -->
+
                 
                 </table>
-                {% if hgmd_pubmed_list != None %}
- 
-                <p> <b> PubMed Citations: </b> </p>
-                {% for pmid in hgmd_pubmed_list %}
 
-                {% for keys,values in pubmed_dict.items %}
-                {% if keys == pmid %}
-
-                
-                <p>{% for author in values.AuthorList %}
-                {{ author }},
-                
-                {% endfor %}
-                {{ values.LastAuthor }}. 
-                <a href='http://www.ncbi.nlm.nih.gov/pubmed/{{ keys }}'>{{ values.Title }}</a>
-                <i>{{ values.Source }}</i> <b>{{ values.Volume }}</b>, 
-                {{ values.Pages }} ({{ values.PubDate }}). 
-
-            </p>
-
-                {% endif %}
-                {% endfor %}
-
-                {% endfor %} 
-                {% endif %}
 
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -609,8 +609,16 @@ data-style1='stick'></div></div>
       
         <div class="panel-body">
 
+{% if brca1_object.muttaster_model != '' %}
+{% for keys,values in muttaster_model_dict.items %}
+{% if keys == brca1_object.muttaster_model %}
+<p> <b> model: </b> {{ values }} </p>
+{% endif %}
+{% endfor %}
+{% endif %}
 {% if brca1_object.muttaster_prediction != '' %}
 <p> <b>prediction: </b> {{ brca1_object.muttaster_prediction }}</p>
+
 {% if brca1_object.muttaster_features != '' %}
 <p> <b> features: </b>
 {% for feature in brca1_object.muttaster_features %}
@@ -625,6 +633,120 @@ data-style1='stick'></div></div>
 
 </div>
       </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          
+         <b>Diagnostic Mutation Database (DMuDB)</b>
+      
+        </h4>
+      </div>
+      
+        <div class="panel-body">
+
+{% if brca1_object.dmudb_clasif != '' %}
+
+<p> <b> count: </b> {{ brca1_object.dmudb_count }} </p>
+
+<p> <b> classification: </b> {{ brca1_object.dmudb_clasif|lower }} </p>
+
+{% else %}
+
+<p> No data found for this variation. </p>
+
+{% endif %}
+
+</div>
+      </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          
+         <b>Exome Variant Server (EVS)</b>
+      
+        </h4>
+      </div>
+      
+        <div class="panel-body">
+
+{% if brca1_object.evs_genotypecount_all != '' %}
+<p> Genotype Counts: <p>
+
+<p><b> All:</b> {{ brca1_object.evs_genotypecount_all }}</p>
+<p><b> European-American:</b> {{ brca1_object.evs_genotypecount_ea }}</p>
+<p><b> African-American:</b> {{ brca1_object.evs_genotypecount_aa }}</p>
+<br>
+
+<p> Polyphen prediction: {{ brca1_object.evs_polyphen }} >/p>
+
+{% else %}
+
+<p> No data found for this variation. </p>
+
+{% endif %}
+
+</div>
+      </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          
+         <b>The Gene Partnership (TGP)</b>
+      
+        </h4>
+      </div>
+      
+        <div class="panel-body">
+
+{% if brca1_object.tgp_genotypecounts_all != '' %}
+<table class='table'>
+<tr>
+    <th> </th>
+    <th> all </th>
+    <th> eur </th>
+    <th> amr </th>
+    <th> afr </th>
+    <th> asn </th>
+</tr>
+<tr>
+    <th> MAF </th>
+    <td> {{ brca1_object.tgp_maf_all }} </td>
+    <td> {{ brca1_object.tgp_maf_eur }} </td>
+    <td> {{ brca1_object.tgp_maf_amr }} </td>
+    <td> {{ brca1_object.tgp_maf_afr }} </td>  
+    <td> {{ brca1_object.tgp_maf_asn }} </td>  
+</tr>
+<tr>
+    <th> Genotype Counts </th>
+    <td> {{ brca1_object.tgp_genotypecounts_all }} </td>
+    <td> {{ brca1_object.tgp_genotypecounts_eur }} </td>
+    <td> {{ brca1_object.tgp_genotypecounts_amr }} </td>
+    <td> {{ brca1_object.tgp_genotypecounts_afr }} </td>
+    <td> {{ brca1_object.tgp_genotypecounts_asn }} </td>
+</tr>
+<tr>
+    <th> Population Size </th>
+    <td> {{ brca1_object.tgp_popsize_all }} </td>
+    <td> {{ brca1_object.tgp_popsize_eur }} </td>
+    <td> {{ brca1_object.tgp_popsize_amr }} </td>
+    <td> {{ brca1_object.tgp_popsize_afr }} </td>
+    <td> {{ brca1_object.tgp_popsize_asn }} </td>
+</tr>
+</table>
+
+
+{% else %}
+
+<p> No data found for this variation. </p>
+
+{% endif %}
+
+</div>
+      </div>
+
 
 {% if brca1_object.alamut_agvgdclass != '' %}
 <div class="panel panel-default">
@@ -660,7 +782,7 @@ data-style1='stick'></div></div>
     {% endfor %}
     <text x="3" y="85" fill="black">less likely</text>
     <text x="326" y="85" fill="black">most likely</text>
-    <text x="20" y="15" fill="black">C0</text>
+    <text x="25" y="15" fill="black">C0</text>
     <text x="77" y="15" fill="black">C15</text>
     <text x="133" y="15" fill="black">C25</text>
     <text x="190" y="15" fill="black">C35</text>
@@ -675,6 +797,32 @@ data-style1='stick'></div></div>
 
 </div>
 {% endif %}
+
+                {% if hgmd_pubmed_list != None %}
+ 
+                <p> <b> PubMed Citations: </b> </p>
+                {% for pmid in hgmd_pubmed_list %}
+
+                {% for keys,values in pubmed_dict.items %}
+                {% if keys == pmid %}
+
+                
+                <p>{% for author in values.AuthorList %}
+                {{ author }},
+                
+                {% endfor %}
+                {{ values.LastAuthor }}. 
+                <a href='http://www.ncbi.nlm.nih.gov/pubmed/{{ keys }}'>{{ values.Title }}</a>
+                <i>{{ values.Source }}</i> <b>{{ values.Volume }}</b>, 
+                {{ values.Pages }} ({{ values.PubDate }}). 
+
+            </p>
+
+                {% endif %}
+                {% endfor %}
+
+                {% endfor %} 
+                {% endif %}
 
 
     </div>
@@ -705,7 +853,7 @@ data-style1='stick'></div></div>
 </div>
 <div class='row'>
 <div class='col-sm-4'>
-<p style='text-align:center'>{{ brca1_object.alamut_siftprediction }}</p> </div>
+<p style='text-align:center'>{{ brca1_object.alamut_siftprediction|lower }}</p> </div>
 <div class='col-sm-4'>
 <p style='text-align:center'>{{ brca1_object.alamut_siftweight }}</p> </div>
 <div class='col-sm-4'>
@@ -801,7 +949,7 @@ data-style1='stick'></div></div>
       </div>
       
         <div class="panel-body">
-<p> prediction based on {{ brca1_object.polyphen2_based_on }}: {{ brca1_object.polyphen2_prediction }} </p> 
+<p> <b>prediction based on {{ brca1_object.polyphen2_based_on }}:</b> {{ brca1_object.polyphen2_prediction }} </p> 
 <h5 style='text-align:center'> HumDiv </h5>
 <div class='row'>
 <div class='col-sm-2'>
@@ -876,11 +1024,7 @@ data-style1='stick'></div></div>
 
 
 
-{% if brca1_object.polyphen2_prediction != '' %}
-<p> <b>PolyPhen2 prediction: </b> {{ brca1_object.polyphen2_prediction }}</p> 
 
-
-{% endif %}
 
 
 

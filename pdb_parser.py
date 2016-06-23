@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 parser = PDBParser()
 pdbl = PDBList()
 structure = parser.get_structure('4igk','p3_website/p3_app/static/p3_app/pdb_files/1JM7.pdb')
-#structure = pdbl.retrieve_pdb_file('1JM7')
+#structure = pdbl.retrieve_pdb_file('4igk')
 residues = structure.get_residues()
 compound = structure.header['compound']
 title = structure.header['name']

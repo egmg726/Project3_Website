@@ -14,6 +14,7 @@ import os
 from .forms import RsForm
 from .models import *
 from pmid_dict import *
+from gene_dict import *
 
 def index(request):
     errors = []
@@ -23,17 +24,29 @@ def index(request):
 
         try:
             rsid = request.POST['rs_id']
+            
         except MultiValueDictKeyError:
             rsid = False
+            
 
         try:
             chr_num = request.POST['chr_num']
             chr_loc = request.POST['chr_loc']
+            
         except MultiValueDictKeyError:
             chr_num = False
             chr_loc = False
+            
 
         snpsub = request.POST.get('snpsubstitution', '')
+
+        try:
+            protein_id = request.POST['protein_id']
+            aa_change = request.POST['aa_change']
+        except MultiValueDictKeyError:
+            protein_id = False
+            aa_change = False
+
 
         if rsid != False:      
             if rsid.startswith('rs') == False:
@@ -54,7 +67,7 @@ def index(request):
                     errors.append('You have not entered a missense mutation for this position.')
     
 
-        else:
+        elif chr_loc != False:
             try:
                 int(chr_loc)
             except ValueError:
@@ -79,17 +92,34 @@ def index(request):
             if brca1_object == '':
                 errors.append('You have not entered a missense mutation for this position.')    
 
+        elif protein_id != False:
+
+            if not Brca1New.objects.filter(gene=protein_id).exists():
+                errors.append('You have entered an ID that does not currently exist in our database.')
+            else:
+                brca1_object = None
+                for obj in Brca1New.objects.filter(gene=protein_id):
+                    if aa_change == obj.hgvs_prot.split('.')[1] or aa_change == obj.hgvs_prot_code1.split('.')[1]:
+                        brca1_object = obj
+                        break
+
+                if brca1_object == None:
+                    errors.append('That amino acid change was not found in the database.') 
+
+
     
         if errors:
             if rsid != False:
                 which_error = 'rsid'
-            else:
+            elif chr_loc != False:
                 which_error = 'chr'
+            elif protein_id != False:
+                which_error = 'protein_id'
 
             return render(request,'p3_app/index.html',{'errors':errors, 'which_error':which_error})
 
         resi_num = brca1_object.hgvs_prot_code1.split('.')[1][:-1][1:]
-        resi_string = 'resi:'+str(resi_num)
+        resi_string = 'resi:'+str(resi_num)+';chain:A'
 
         if int(resi_num) >= 1 and int(resi_num) <= 103:
             pdb_entry = '1JM7'
@@ -332,12 +362,14 @@ def index(request):
             brca1_object.muttaster_features = brca1_object.muttaster_features.split(',')
 
         ss_img_loc = int(brca1_object.suspect_score)*4
-        agvgd_dict = {'C0': 35, 'C15': 92, 'C25':148, 'C35':205,'C45':261,'C55':317,'C65':375} 
+        agvgd_dict = {'C0': 40, 'C15': 92, 'C25':148, 'C35':205,'C45':261,'C55':317,'C65':375} 
+
+        muttaster_model_dict = {'complex_aa':'mutation introducing a premature stop codon','simple_aae':'substitution/insertion/deletion of a single amino acid'}
 
         context = {'rsid':rsid, 'brca1_object':brca1_object,'resi_string':resi_string, 'resi_num':resi_num, 'pdb_entry':pdb_entry, 'chr_num':chr_num,'chr_loc':chr_loc, 'pdb_list':pdb_list, 'match_dict':match_dict, 'sequence':sequence, 'hgmd_pubmed_list':hgmd_pubmed_list, 'swissprot_dict':swissprot_dict, 'alamut_pd1_dict':alamut_pd1_dict,'alamut_pd2_dict':alamut_pd2_dict,'alamut_pd3_dict':alamut_pd3_dict,
 'alamut_pd4_dict':alamut_pd4_dict,'agvgd_dict':agvgd_dict,
-'ss_img_loc':ss_img_loc, 
-'pubmed_dict':pubmed_dict}
+'ss_img_loc':ss_img_loc,'muttaster_model_dict':muttaster_model_dict, 
+'pubmed_dict':pubmed_dict, 'gene_dict':gene_dict, 'protein_id':protein_id,'aa_change':aa_change}
         return render(request,'p3_app/results_page2.html',context)
 
     return render(request,'p3_app/index.html',{})

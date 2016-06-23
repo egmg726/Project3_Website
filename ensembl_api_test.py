@@ -3,8 +3,8 @@ import json
  
 server = "https://rest.ensembl.org"
 #ext = "/vep/human/region/9:22125503-22125502:1/C?"
-ext = "/vep/human/hgvs/ENST00000357654:c.1A>C"
-ext = "/vep/human/hgvs/ENSP00000418960:p.M1L"
+#ext = "/vep/human/hgvs/ENST00000357654:c.5A>G"
+ext = "/vep/human/hgvs/ENSP00000418960:p.M1V"
  
 r = requests.get(server+ext, headers={ "Content-Type" : "application/json"})
  

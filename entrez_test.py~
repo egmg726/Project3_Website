@@ -2,6 +2,9 @@ from Bio import Entrez
 #import pandas as pd
 
 
+#for loop when have all gene ids
+#store in file
+
 def get_entrez_gene_dict(gene_id):
     gene_id = str(gene_id)
     Entrez.email = 'emma.gail15@imperial.ac.uk'
@@ -23,4 +26,5 @@ entrez_dict = dict(record['DocumentSummarySet'])
 gene_dict = dict(entrez_dict['DocumentSummary'][0])
 print gene_dict
 #print gene_dict['Description']
+#print gene_dict['Summary']
 
