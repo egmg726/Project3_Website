@@ -14,9 +14,17 @@ for ref in record.annotations['references']:
 #record.annotations['comment_function']
 #record.annotations['comment_polymorphism']
 #record.annotations['comment_PTM']
+#print record.annotations['comment_function']
+
+print record.annotations.keys()
 
 for feature in record.features:
-    print feature.qualifiers
+    
+    feature.type
+    feature.location
+    feature.id
+    feature.qualifiers
+    #print feature.qualifiers
 #str(feature.location).split(':')
     break
 

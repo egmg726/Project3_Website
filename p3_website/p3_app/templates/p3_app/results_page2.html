@@ -245,7 +245,26 @@ pviz.FeatureDisplayer.setCustomHandler('mickey', {
                 }
             });
 
+pviz.FeatureDisplayer.setCustomHandler('sp_circle', {
+                appender : function(viewport, svgGroup, features, type) {
+                    var selCircle = svgGroup.selectAll("g.feature.internal.data." + type).data(features).enter().append("g").attr("class", "feature internal data " + type)
+                    selCircle.append("circle").attr('class', 'swissprot sp_circle')
+                    //add a 'doubltful class based on the feature 'improbable' attribute
+                    .classed('doubtful', function(ft) {
+                        return ft.improbable
+                    }).attr('r', function(ft) {
+                        return 3 * Math.sqrt(ft.count)
+                    });
+                    return selCircle;
+                },
 
+            positioner : function(viewport, d3selection) {
+                    d3selection.attr('transform', function(ft, i) {
+                        return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.5 + ft.displayTrack) + ')';
+                    });
+                    return d3selection
+                }
+            });
 
 
 
@@ -263,6 +282,7 @@ pviz.FeatureDisplayer.setCustomHandler('mickey', {
 
 add_pfam_values();
 
+/*
     var swissprot_fts = [];
     function add_swissprot_values(){
     {% for keys, values in swissprot_dict.items %}
@@ -272,6 +292,23 @@ add_pfam_values();
 };
 
 add_swissprot_values();
+*/
+
+    var swissprot_fts = [];
+    var swissprot_var_fts = [];
+    function add_swissprot_values(){
+    {% for keys, values in swissprot_dict.items %}
+    {% if values.1 == values.2 %}
+    swissprot_var_fts.push(['{{ values.0 }}','{{ values.1 }}','{{ values.2 }}','{{ values.3 }}'])
+    {% else %}
+    swissprot_fts.push(['{{ values.0 }}','{{ values.1 }}','{{ values.2 }}','{{ values.3 }}'])
+    {% endif %}
+    {% endfor %}
+};
+
+add_swissprot_values();
+
+
 
 
     var alamut_pd1_fts = [];
@@ -365,6 +402,7 @@ add_alamut_pd4_values();
             }
         }));
 
+
         seqEntry.addFeatures(swissprot_fts.map(function(ft) {
             return {
                 category : 'swissprot',
@@ -378,6 +416,23 @@ add_alamut_pd4_values();
                 count: 2,
             }
         }));
+
+
+        seqEntry.addFeatures(swissprot_var_fts.map(function(ft) {
+            return {
+                category : 'swissprot',
+                type : 'sp_circle',
+                start : ft[1]-1,
+                end : ft[2]-1,
+                text : '',
+                inner_text : ft[3],
+                inner_start : ft[1],
+                inner_end : ft[2],
+                count: 2,
+                inner_type : ft[0]
+            }
+        }));
+
 
         seqEntry.addFeatures(alamut_pd1_fts.map(function(ft) {
             return {
@@ -471,6 +526,31 @@ add_alamut_pd4_values();
                 
             });
 
+
+            pviz.FeatureDisplayer.addMouseoverCallback(['sp_circle'], function(ft) {
+                mouseOveredFT = ft;
+                var el = $('#output-mouse-over');
+                el.empty();
+                el.html('<div class="panel panel-default"> <div class="panel-body">' + 
+
+               
+
+                '<b>'+ft.inner_text+'</b>' + '<br>' +
+                'type: ' + ft.inner_type + '<br>' +
+                'position: ' + ft.inner_start + '<br>'
+                
+
+                
+
+                
+                //+'{{ resi_num }}'
+                //'<a href="http://pfam.xfam.org/family/"
+
+                +'</div></div>')
+            }).addMouseoutCallback(['pfam_type'], function(ft) {
+                mouseOveredFT = undefined;
+                
+            });
 
   </script>
 <br> <br>

@@ -14,11 +14,17 @@ for ref in record.annotations['references']:
 #record.annotations['comment_function']
 #record.annotations['comment_polymorphism']
 #record.annotations['comment_PTM']
+#print record.annotations['comment_function']
 
 for feature in record.features:
-    print feature
+    
+    feature.type
+    feature.location
+    feature.id
+    feature.qualifiers
+    print feature.qualifiers
 #str(feature.location).split(':')
-    break
+    #break
 
 #handle = open('P38398_uniprot.xml','rU')
 #for record in SeqIO.parse(handle,'uniprot-xml'):

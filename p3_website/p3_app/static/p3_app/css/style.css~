@@ -8,6 +8,15 @@ circle.variation.mickey:hover {
        fill-opacity: 0.2;
 }
 
+circle.swissprot.mickey {
+       fill: #45A4D2;
+       fill-opacity: 0.8;
+}
+circle.swissprot.mickey:hover {
+       fill: #45A4D2;
+       fill-opacity: 0.2;
+}
+
         g.feature.psms.stanley rect.feature {
             fill: red;
             fill-opacity: 0.8;
@@ -43,13 +52,13 @@ circle.variation.mickey:hover {
            
         }
 
-        g.feature.alamut_pd1 rect.feature {
+        g.feature.alamut rect.feature {
             fill: green;
             fill-opacity: 0.8;
             
             
         }
-        g.feature.alamut_pd1:hover rect.feature {
+        g.feature.alamut:hover rect.feature {
             fill: green;
             fill-opacity: 0.2;
             
