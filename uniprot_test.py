@@ -3,10 +3,10 @@ from Bio import SeqIO
 record = SeqIO.read(open('P38398_uniprot.xml'),'uniprot-xml')
 #record.features
 for ref in record.annotations['references']:
-    #print ref.authors
+    print ref.pubmed_id
     break
 #record.annotations['comment_domain']
-#record.annotations['comment_tissuespecificty']
+#print record.annotations['comment_tissuespecificity']
 #record.annotations['comment_enzymeregulation']
 #record.annotations['comment_disease']
 #record.annotations['comment_onlineinformation']
@@ -16,7 +16,7 @@ for ref in record.annotations['references']:
 #record.annotations['comment_PTM']
 #print record.annotations['comment_function']
 
-print record.annotations.keys()
+#print record.annotations.keys()
 
 for feature in record.features:
     

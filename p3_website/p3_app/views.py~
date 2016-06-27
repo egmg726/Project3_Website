@@ -6,6 +6,7 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.utils.datastructures import MultiValueDictKeyError
 from Bio.PDB.PDBParser import PDBParser
 from Bio.PDB.PDBList import PDBList
+from Bio import SeqIO
 import urllib
 import xml.etree.ElementTree as ET
 from django.conf import settings
@@ -46,6 +47,11 @@ def index(request):
         except MultiValueDictKeyError:
             protein_id = False
             aa_change = False
+
+        try:
+            gene_id = request.POST['gene_id']
+        except MultiValueDictKeyError:
+            gene_id = False
 
 
         if rsid != False:      
@@ -106,7 +112,10 @@ def index(request):
                 if brca1_object == None:
                     errors.append('That amino acid change was not found in the database.') 
 
-
+        elif gene_id != False:
+            if not Brca1New.objects.filter(gene=gene_id).exists():
+                errors.append('You have entered an ID that does not currently exist in our database.')
+                
     
         if errors:
             if rsid != False:
@@ -115,19 +124,63 @@ def index(request):
                 which_error = 'chr'
             elif protein_id != False:
                 which_error = 'protein_id'
+            elif gene_id != False:
+                which_error = 'gene_id'
 
             return render(request,'p3_app/index.html',{'errors':errors, 'which_error':which_error})
 
-        resi_num = brca1_object.hgvs_prot_code1.split('.')[1][:-1][1:]
-        resi_string = 'resi:'+str(resi_num)
+        context = {}
 
-        if int(resi_num) >= 1 and int(resi_num) <= 103:
-            pdb_entry = '1JM7'
-        elif int(resi_num) >= 1646 and int(resi_num) <= 1859:
-            pdb_entry = '4IGK'
-        else:
+        context['rsid'] = rsid
+        context['chr_loc'] = chr_loc
+        context['chr_num'] = chr_num
+        context['protein_id'] = protein_id
+        context['gene_id'] = gene_id
+
+        #get right gene dict based on gene_id -- dictionary?
+        context['gene_dict'] = gene_dict
+
+
+        pdb_list_dict = {
+            'BRCA1':['1JM7','4IGK'],
+
+        }
+
+    
+        pdb_stop_start_dict = {
+            '1JM7':[1,103],
+            '4IGK':[1646,1859],
+        }
+
+        context['pdb_stop_start_dict'] = pdb_stop_start_dict
+
+
+
+
+        if gene_id is False:
+            resi_num = brca1_object.hgvs_prot_code1.split('.')[1][:-1][1:]
+            context['resi_num'] = resi_num
+            resi_string = 'resi:'+str(resi_num)+';chain:A'
+            context['resi_string'] = resi_string
+
+            pdb_entry_list = pdb_list_dict[brca1_object.gene]
+            
             pdb_entry = None
 
+            for pdbe in pdb_entry_list:
+                pdb_stop_start_list = pdb_stop_start_dict[pdbe]
+                if int(resi_num) >= pdb_stop_start_list[0] and int(resi_num) <= pdb_stop_start_list[1]:
+                    pdb_entry = pdbe
+
+
+        else:
+            pdb_entry = pdb_list_dict[gene_id]
+            resi_num = 0
+            #create dictionary for this list
+        
+
+
+        context['pdb_entry'] = pdb_entry
 
         #list of pdb information for each gene for protein sequence diagram
 
@@ -135,15 +188,36 @@ def index(request):
             parser = PDBParser()
             pdbl = PDBList()
             module_dir = os.path.dirname(__file__)  # get current directory
-            file_path = os.path.join(module_dir, 'static/p3_app/pdb_files/'+pdb_entry+'.pdb')
-            pdb_file = open(file_path)
-            structure = parser.get_structure(pdb_entry,pdb_file)
-            compound = structure.header['compound']
-            title = structure.header['name']
-            journal = structure.header['journal_reference']
-            pdb_list = [compound,title,journal]
+            if type(pdb_entry) == str:
+                file_path = os.path.join(module_dir, 'static/p3_app/pdb_files/'+pdb_entry+'.pdb')
+                pdb_file = open(file_path)
+                structure = parser.get_structure(pdb_entry,pdb_file)
+                compound = structure.header['compound']
+                title = structure.header['name']
+                journal = structure.header['journal_reference']
+                pdb_list = [compound,title,journal]
+            elif type(pdb_entry) == list:
+                pdb_dict = {}
+                for pdbe in pdb_entry:        
+                    file_path = os.path.join(module_dir, 'static/p3_app/pdb_files/'+pdbe+'.pdb')
+                    pdb_file = open(file_path)
+                    structure = parser.get_structure(pdb_entry,pdb_file)
+                    compound = structure.header['compound']
+                    title = structure.header['name']
+                    journal = structure.header['journal_reference']
+                    pdb_list = [compound,title,journal]
+                    pdb_dict[pdbe] = pdb_list
+
+                pdb_list = []
+                context['pdb_dict'] = pdb_dict
+
         else:
             pdb_list = []
+
+        context['pdb_list'] = pdb_list
+
+        #if gene_id is not False:
+         #get gene list   
 
         #create a list of synonyms and fragments so they're properly capitalized for site
 
@@ -179,21 +253,38 @@ def index(request):
         for seq in root.iter('sequence'):
             sequence = seq.text
 
-        
+        context['sequence'] = sequence
+        context['match_dict'] = match_dict
+        context['resi_in_domain'] = resi_in_domain
 
         #additional pfam info for mouseover feature
 
-        if brca1_object.hgmd_pubmed == 'Pubmed':
-            hgmd_pubmed_list = brca1_object.hgmd_pubmed_list.split(' ')
-        else:
-            hgmd_pubmed_list = None
 
-        pubmed_dict = {}
-        if hgmd_pubmed_list is not None:
-            for pmid in hgmd_pubmed_list:
-                if pmid in pmid_dict.keys():
-                    pubmed_dict[pmid] = pmid_dict[pmid]
+        file_path = os.path.join(module_dir, 'static/p3_app/uniprot_files/'+pfam_id+'.xml')
+        record = SeqIO.read(open(file_path),'uniprot-xml')
+        uniprot_comment_dict = {}
 
+        uniprot_comment_dict['domain'] = record.annotations['comment_domain']
+        uniprot_comment_dict['tissue_specificity'] = record.annotations['comment_tissuespecificity']
+        uniprot_comment_dict['enzyme_regulation'] = record.annotations['comment_enzymeregulation']
+        uniprot_comment_dict['disease'] = record.annotations['comment_disease']
+
+        oi_dict = {}
+        for oi in record.annotations['comment_onlineinformation']:
+            oi = oi.split('@')
+            oi_dict[oi[0]] = oi[1]
+
+        uniprot_comment_dict['subunit'] = record.annotations['comment_subunit']
+        uniprot_comment_dict['function'] = record.annotations['comment_function']
+        uniprot_comment_dict['polymorphism'] = record.annotations['comment_polymorphism']
+        uniprot_comment_dict['ptm'] = record.annotations['comment_PTM']
+
+        context['uniprot_comment_dict'] = uniprot_comment_dict
+        context['oi_dict'] = oi_dict
+
+
+        uniprot_references = record.annotations['references']
+        context['uniprot_references'] = uniprot_references
 
                 
         #add info for pubmed list - turn into dictionary of citation values
@@ -223,6 +314,8 @@ def index(request):
             
             swissprot_dict[count] = [sp_type,start,end,sp_desc]
             count += 1
+
+        context['swissprot_dict'] = swissprot_dict
         
         count = 0
         alamut_pd1_dict = {}
@@ -261,6 +354,8 @@ def index(request):
                     alamut_pd1_dict[count] = [domain,start,end]
                     count += 1
 
+        context['alamut_pd1_dict'] = alamut_pd1_dict
+
         ala_list = []
         alamut_pd2_dict = {}
         end = 0
@@ -289,6 +384,9 @@ def index(request):
                 if domain != '':
                     alamut_pd2_dict[count] = [domain,start,end]
                     count += 1                
+
+        context['alamut_pd2_dict'] = alamut_pd2_dict
+
 
         ala_list = []
         alamut_pd3_dict = {}
@@ -319,6 +417,7 @@ def index(request):
                     alamut_pd3_dict[count] = [domain,start,end]
                     count += 1                
 
+        context['alamut_pd3_dict'] = alamut_pd3_dict
 
                 #make condition if last entry is part of a domain
         ala_list = []
@@ -349,7 +448,27 @@ def index(request):
                 if domain != '':
                     alamut_pd4_dict[count] = [domain,start,end]
                     count += 1                
+
+        context['alamut_pd4_dict'] = alamut_pd4_dict
+
+        if gene_id is not False:
+            return render(request,'p3_app/gene_results.html',context)
                   
+
+        if brca1_object.hgmd_pubmed == 'Pubmed':
+            hgmd_pubmed_list = brca1_object.hgmd_pubmed_list.split(' ')
+        else:
+            hgmd_pubmed_list = None
+
+        context['hgmd_pubmed_list'] = hgmd_pubmed_list
+
+        pubmed_dict = {}
+        if hgmd_pubmed_list is not None:
+            for pmid in hgmd_pubmed_list:
+                if pmid in pmid_dict.keys():
+                    pubmed_dict[pmid] = pmid_dict[pmid]
+
+        context['pubmed_dict'] = pubmed_dict
 
 
         if brca1_object.alamut_siftprediction == '':
@@ -362,14 +481,23 @@ def index(request):
             brca1_object.muttaster_features = brca1_object.muttaster_features.split(',')
 
         ss_img_loc = int(brca1_object.suspect_score)*4
+        context['ss_img_loc'] = ss_img_loc
+
         agvgd_dict = {'C0': 40, 'C15': 92, 'C25':148, 'C35':205,'C45':261,'C55':317,'C65':375} 
+        context['agvgd_dict'] = agvgd_dict
 
         muttaster_model_dict = {'complex_aa':'mutation introducing a premature stop codon','simple_aae':'substitution/insertion/deletion of a single amino acid'}
+        context['muttaster_model_dict'] = muttaster_model_dict
 
+        context['brca1_object'] = brca1_object
+
+        '''
         context = {'rsid':rsid, 'brca1_object':brca1_object,'resi_string':resi_string, 'resi_num':resi_num, 'pdb_entry':pdb_entry, 'chr_num':chr_num,'chr_loc':chr_loc, 'pdb_list':pdb_list, 'match_dict':match_dict, 'sequence':sequence, 'hgmd_pubmed_list':hgmd_pubmed_list, 'swissprot_dict':swissprot_dict, 'alamut_pd1_dict':alamut_pd1_dict,'alamut_pd2_dict':alamut_pd2_dict,'alamut_pd3_dict':alamut_pd3_dict,
 'alamut_pd4_dict':alamut_pd4_dict,'agvgd_dict':agvgd_dict,
 'ss_img_loc':ss_img_loc,'muttaster_model_dict':muttaster_model_dict, 
 'pubmed_dict':pubmed_dict, 'gene_dict':gene_dict, 'protein_id':protein_id,'aa_change':aa_change}
+        '''
+
         return render(request,'p3_app/results_page2.html',context)
 
     return render(request,'p3_app/index.html',{})

@@ -2,11 +2,14 @@ import requests, sys
 import json
  
 server = "https://rest.ensembl.org"
+server = "http://grch37.rest.ensembl.org"
 #ext = "/vep/human/region/9:22125503-22125502:1/C?"
 #ext = "/vep/human/hgvs/ENST00000357654:c.5A>G"
 #ext = "/vep/human/hgvs/ENSP00000418960:p.M1V"
 #ext = "/lookup/id/ENSG00000012048?expand=1"
-ext = "/lookup/id/ENST00000357654?expand=1"
+#ext = "/lookup/id/ENST00000357654?expand=1"
+ext = "/variation/human/rs80356994"
+#ext = "/vep/human/region/17:43124078-43124078:1/C"
  
 r = requests.get(server+ext, headers={ "Content-Type" : "application/json"})
  

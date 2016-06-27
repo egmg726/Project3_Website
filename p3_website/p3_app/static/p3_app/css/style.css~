@@ -8,11 +8,11 @@ circle.variation.mickey:hover {
        fill-opacity: 0.2;
 }
 
-circle.swissprot.mickey {
+circle.swissprot.sp_circle {
        fill: #45A4D2;
        fill-opacity: 0.8;
 }
-circle.swissprot.mickey:hover {
+circle.swissprot.sp_circle:hover {
        fill: #45A4D2;
        fill-opacity: 0.2;
 }
@@ -69,4 +69,8 @@ circle.swissprot.mickey:hover {
 tr:hover {
     color: black;
 
+}
+
+tab1 {
+    padding-right: 10px;
 }

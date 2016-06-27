@@ -159,7 +159,7 @@ $.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Boot
                     {% if rsid != False %}
                     <small>{{ rsid }}</small>
                     {% elif chr_num != False %}
-                    <small>{{ chr_num }}.{{ chr_loc }} </small>
+                    <small>{{ chr_num }}:{{ chr_loc }} </small>
                     {% elif protein_id != False %}
                     <small>{{ protein_id }} - {{ aa_change }} </small>
                     {% if brca1_object.rsid != '' %}
@@ -603,11 +603,12 @@ data-style1='stick'></div></div>
 
 <!-- end of row -->
 </div>
-            <div class="row col-lg-12">
+
+<div class="row col-lg-12">
                    {% if rsid != False %}
                     <h2>{{ rsid }}</h2>
                     {% elif chr_num != False %}
-                    <h2>{{ chr_num }}.{{ chr_loc }} </h2>
+                    <h2>{{ chr_num }}:{{ chr_loc }} </h2>
                     {% elif protein_id != False %}
                     <h2>{{ protein_id }} - {{ aa_change }} </h2>
                     {% if brca1_object.rsid != '' %}
@@ -638,7 +639,7 @@ data-style1='stick'></div></div>
                 <table class='table'>
                 <tr>
                     <td> <b>chromosome location: </b> </td>
-                    <td> {{ brca1_object.hg19_chr }}.{{ brca1_object.hg19_pos }} </td>
+                    <td> {{ brca1_object.hg19_chr }}:{{ brca1_object.hg19_pos }} </td>
                 </tr>
                 <tr>
                     <td> <b>variation location:</b> </td>
@@ -672,11 +673,7 @@ data-style1='stick'></div></div>
                 <td> {{ brca1_object.hgmd_acc }} </td>
                 </tr>
                 {% endif %}
-
-
-                
-                </table>
-
+                </table> 
 
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -712,8 +709,9 @@ data-style1='stick'></div></div>
 
 
 </div>
-      </div>
+      </div> 
 
+{% if brca1_object.dmudb_clasif != '' %}
     <div class="panel panel-default">
       <div class="panel-heading">
         <h4 class="panel-title">
@@ -725,21 +723,21 @@ data-style1='stick'></div></div>
       
         <div class="panel-body">
 
-{% if brca1_object.dmudb_clasif != '' %}
+
 
 <p> <b> count: </b> {{ brca1_object.dmudb_count }} </p>
 
 <p> <b> classification: </b> {{ brca1_object.dmudb_clasif|lower }} </p>
 
-{% else %}
 
-<p> No data found for this variation. </p>
 
-{% endif %}
+
 
 </div>
-      </div>
+      </div> 
+{% endif %}
 
+{% if brca1_object.evs_genotypecount_all != '' %}
     <div class="panel panel-default">
       <div class="panel-heading">
         <h4 class="panel-title">
@@ -751,7 +749,7 @@ data-style1='stick'></div></div>
       
         <div class="panel-body">
 
-{% if brca1_object.evs_genotypecount_all != '' %}
+
 <p> Genotype Counts: <p>
 
 <p><b> All:</b> {{ brca1_object.evs_genotypecount_all }}</p>
@@ -759,17 +757,17 @@ data-style1='stick'></div></div>
 <p><b> African-American:</b> {{ brca1_object.evs_genotypecount_aa }}</p>
 <br>
 
-<p> Polyphen prediction: {{ brca1_object.evs_polyphen }} >/p>
+<p> Polyphen prediction: {{ brca1_object.evs_polyphen }} </p>
 
-{% else %}
 
-<p> No data found for this variation. </p>
 
-{% endif %}
+
 
 </div>
-      </div>
+      </div> 
+{% endif %}
 
+{% if brca1_object.tgp_genotypecounts_all != '' %}
     <div class="panel panel-default">
       <div class="panel-heading">
         <h4 class="panel-title">
@@ -781,51 +779,88 @@ data-style1='stick'></div></div>
       
         <div class="panel-body">
 
-{% if brca1_object.tgp_genotypecounts_all != '' %}
+
 <table class='table'>
 <tr>
     <th> </th>
+{% if brca1_object.tgp_genotypecounts_all != '' %}
     <th> all </th>
+{% endif %}
+{% if brca1_object.tgp_genotypecounts_eur != '' %}
     <th> eur </th>
+{% endif %}
+{% if brca1_object.tgp_genotypecounts_amr != '' %}
     <th> amr </th>
+{% endif %}
+{% if brca1_object.tgp_genotypecounts_afr != '' %}
     <th> afr </th>
+{% endif %}
+{% if brca1_object.tgp_genotypecounts_asn != '' %}
     <th> asn </th>
+{% endif %}
 </tr>
 <tr>
     <th> MAF </th>
+{% if brca1_object.tgp_maf_all != '' %}
     <td> {{ brca1_object.tgp_maf_all }} </td>
+{% endif %}
+{% if brca1_object.tgp_maf_eur != '' %}
     <td> {{ brca1_object.tgp_maf_eur }} </td>
+{% endif %}
+{% if brca1_object.tgp_maf_amr != '' %}
     <td> {{ brca1_object.tgp_maf_amr }} </td>
-    <td> {{ brca1_object.tgp_maf_afr }} </td>  
-    <td> {{ brca1_object.tgp_maf_asn }} </td>  
+{% endif %}
+{% if brca1_object.tgp_maf_afr != '' %}
+    <td> {{ brca1_object.tgp_maf_afr }} </td> 
+{% endif %}
+{% if brca1_object.tgp_maf_asn != '' %} 
+    <td> {{ brca1_object.tgp_maf_asn }} </td>
+{% endif %}  
 </tr>
 <tr>
     <th> Genotype Counts </th>
+{% if brca1_object.tgp_genotypecounts_all != '' %}
     <td> {{ brca1_object.tgp_genotypecounts_all }} </td>
+{% endif %}
+{% if brca1_object.tgp_genotypecounts_eur != '' %}
     <td> {{ brca1_object.tgp_genotypecounts_eur }} </td>
+{% endif %}
+{% if brca1_object.tgp_genotypecounts_amr != '' %}
     <td> {{ brca1_object.tgp_genotypecounts_amr }} </td>
+{% endif %}
+{% if brca1_object.tgp_genotypecounts_afr != '' %}
     <td> {{ brca1_object.tgp_genotypecounts_afr }} </td>
+{% endif %}
+{% if brca1_object.tgp_genotypecounts_asn != '' %}
     <td> {{ brca1_object.tgp_genotypecounts_asn }} </td>
+{% endif %}
 </tr>
 <tr>
     <th> Population Size </th>
+{% if brca1_object.tgp_popsize_all != '' %}
     <td> {{ brca1_object.tgp_popsize_all }} </td>
+{% endif %}
+{% if brca1_object.tgp_popsize_eur != '' %}
     <td> {{ brca1_object.tgp_popsize_eur }} </td>
+{% endif %}
+{% if brca1_object.tgp_popsize_amr != '' %}
     <td> {{ brca1_object.tgp_popsize_amr }} </td>
+{% endif %}
+{% if brca1_object.tgp_popsize_afr != '' %}
     <td> {{ brca1_object.tgp_popsize_afr }} </td>
+{% endif %}
+{% if brca1_object.tgp_popsize_asn != '' %}
     <td> {{ brca1_object.tgp_popsize_asn }} </td>
+{% endif %}
 </tr>
 </table>
 
 
-{% else %}
 
-<p> No data found for this variation. </p>
-
-{% endif %}
 
 </div>
       </div>
+{% endif %}
 
 
 {% if brca1_object.alamut_agvgdclass != '' %}
@@ -875,42 +910,20 @@ data-style1='stick'></div></div>
 </div>
 </div>
 
-</div>
+</div> 
 {% endif %}
 
-                {% if hgmd_pubmed_list != None %}
- 
-                <p> <b> PubMed Citations: </b> </p>
-                {% for pmid in hgmd_pubmed_list %}
-
-                {% for keys,values in pubmed_dict.items %}
-                {% if keys == pmid %}
-
-                
-                <p>{% for author in values.AuthorList %}
-                {{ author }},
-                
-                {% endfor %}
-                {{ values.LastAuthor }}. 
-                <a href='http://www.ncbi.nlm.nih.gov/pubmed/{{ keys }}'>{{ values.Title }}</a>
-                <i>{{ values.Source }}</i> <b>{{ values.Volume }}</b>, 
-                {{ values.Pages }} ({{ values.PubDate }}). 
-
-            </p>
-
-                {% endif %}
-                {% endfor %}
-
-                {% endfor %} 
-                {% endif %}
 
 
+
+</div>
+<!--
     </div>
 
+<div class='col-lg-6'> -->
+
+
 <div class='col-lg-6'>
-
-
-
 {% if brca1_object.alamut_siftprediction != None %}
 
     <div class="panel panel-default">
@@ -982,7 +995,6 @@ data-style1='stick'></div></div>
 
 {% endif %}
 
-
 <div class="panel panel-default">
   <div class="panel-heading"> <h4 class='panel-title'>
 <svg width="16" height="16">
@@ -1016,7 +1028,6 @@ data-style1='stick'></div></div>
 </div>
 
 </div>
-
 
 {% if brca1_object.polyphen2_hvar_prediction != '' %}
     <div class="panel panel-default">
@@ -1100,20 +1111,46 @@ data-style1='stick'></div></div>
 
 {% endif %}
 
+</div>
 
 
 
+                {% if hgmd_pubmed_list != None %}
+ 
+                <p> <b> PubMed Citations: </b> </p>
+                {% for pmid in hgmd_pubmed_list %}
 
+                {% for keys,values in pubmed_dict.items %}
+                {% if keys == pmid %}
 
+                
+                <p>{% for author in values.AuthorList %}
+                {{ author }},
+                
+                {% endfor %}
+                {{ values.LastAuthor }}. 
+                <a href='http://www.ncbi.nlm.nih.gov/pubmed/{{ keys }}'>{{ values.Title }}</a>
+                <i>{{ values.Source }}</i> <b>{{ values.Volume }}</b>, 
+                {{ values.Pages }} ({{ values.PubDate }}). 
 
+            </p>
 
+                {% endif %}
+                {% endfor %}
+
+                {% endfor %} 
+                {% endif %}
 
 
 
 </div>
+<!-- inner row -->
+
+
+
 
         </div>
-        <!-- /.row -->
+        <!-- /.row-->
 
  
         
