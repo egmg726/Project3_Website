@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% load staticfiles %}
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Results Page - Testing Stage</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'p3_app/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="{% static 'p3_app/css/modern-business.css' %}" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+
+    <!-- EG Custom CSS -->
+    <link href="{% static 'p3_app/css/style.css' %}" rel="stylesheet">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+  
+
+    <!-- jQuery -->
+<!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> -->
+    <script src="{% static 'p3_app/js/jquery.js' %}"></script>
+
+
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'p3_app/js/bootstrap.min.js' %}"></script>
+
+
+<script>
+var bootstrapButton = $.fn.button.noConflict() // return $.fn.button to previously assigned value
+$.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Bootstrap functionality
+</script>
+
+ <script src="http://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script> 
+
+
+  <script src="{% static 'p3_app/js/pviz-bundle.min.js' %}"></script>
+	<link rel="stylesheet" type="text/css" href="{% static 'p3_app/css/pviz-core.css' %}"> 
+
+<!--
+<svg width="100" height="50" version="1.1" xmlns="http://www.w3.org/2000/svg">
+       <style type="text/css">
+        rect{fill:url(#MyGradient)}
+      </style>
+      <defs>
+        <linearGradient id="MyGradient">
+          <stop offset="5%" stop-color="#F60" />
+          <stop offset="95%" stop-color="#FF6" />
+        </linearGradient>
+      </defs>
+-->
+
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'index' %}">Database Name</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="about.html">About</a>
+                    </li>
+                    <li>
+                        <a href="services.html">Services</a>
+                    </li>
+                    <li>
+                        <a href="contact.html">Contact</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Portfolio <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="portfolio-1-col.html">1 Column Portfolio</a>
+                            </li>
+                            <li>
+                                <a href="portfolio-2-col.html">2 Column Portfolio</a>
+                            </li>
+                            <li>
+                                <a href="portfolio-3-col.html">3 Column Portfolio</a>
+                            </li>
+                            <li>
+                                <a href="portfolio-4-col.html">4 Column Portfolio</a>
+                            </li>
+                            <li>
+                                <a href="portfolio-item.html">Single Portfolio Item</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Other Pages <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="full-width.html">Full Width Page</a>
+                            </li>
+                            <li>
+                                <a href="sidebar.html">Sidebar Page</a>
+                            </li>
+                            <li>
+                                <a href="faq.html">FAQ</a>
+                            </li>
+                            <li>
+                                <a href="404.html">404</a>
+                            </li>
+                            <li>
+                                <a href="pricing.html">Pricing Table</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <!-- Page Heading/Breadcrumbs -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Results
+ 
+                    <small>{{ gene_id }}</small>
+
+                </h1>
+                <ol class="breadcrumb">
+                    <li><a href="{% url 'index' %}">Home</a>
+                    </li>
+                    <li class="active">Results</li>
+                </ol>
+            </div>
+        </div>
+        <!-- /.row -->
+
+
+<div class="container col-lg-12">
+<div class='col-lg-8'>
+<h2> Protein Sequence for {{ gene_id }}</h2>
+<p> <i>Aliases: {{ gene_dict.OtherAliases }} </i></p>
+</div>
+        <div class="col-lg-4" id="output-mouse-over">
+        <div class="panel panel-default"> 
+        <div class='panel-body'>
+    <b>Scroll over the domains for more information.</b> <br><br></div> </div>
+        </div>
+
+  <div id="main"></div>
+<br>
+      <div class="row">
+<!--
+        <div class="col-lg-6">
+        <div class="panel panel-default"> 
+        <div class='panel-body'>
+    <b>Placeholder for more protein info</b> </div> </div>
+        </div> -->
+
+
+
+        <div class="col-lg-12" id="output-pdb">
+        <div class="panel panel-default"> 
+        <div class='panel-body'>
+    
+        <p> <b> Scroll over PDB domains for additional information. </b> <p>
+
+        </div> </div>
+        </div>
+
+
+
+        <div class="col-lg-12">
+        <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          
+         <b>NCBI</b>
+      
+        </h4>
+      </div>
+        <div class='panel-body'>
+        <b>Summary: </b>{{ gene_dict.Summary }}
+
+         </div> </div>
+        </div> </div> 
+
+
+        <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          
+         <b>Uniprot</b>
+      
+        </h4>
+      </div>
+        <div class='panel-body'>
+        
+        {% for keys, values in uniprot_comment_dict.items %}
+
+
+        <p> <b>{{ keys }}</b>: </p>
+
+
+        {% for value in values %}
+        <li style='list-style-type:none;padding-left:5px'>{{ value }}</li>
+
+
+        {% endfor %}
+        <br> <br>
+        {% endfor %}
+
+
+
+        <p><b> Online Information: </b></p>
+        {% for keys,values in oi_dict.items %}
+        <tab1><a target="_blank" href="{{ values }}">{{ keys }}</a></tab1>
+
+        {% endfor %}
+         </div> </div>
+        </div>
+
+
+<p> <b>Uniprot References</b> <p>
+    {% for ref in uniprot_references %}
+
+    <p>{{ ref.authors }}. <a target="_blank" ahref="http://www.ncbi.nlm.nih.gov/pubmed/{{ ref.pubmed_id }}">{{ ref.title }}</a> {{ ref.journal }}</p>
+
+
+    {% endfor %}
+
+
+
+  <script>
+    var pviz = this.pviz;
+    var seqEntry = new pviz.SeqEntry({sequence : '{{ sequence }}'});
+
+    new pviz.SeqEntryAnnotInteractiveView({
+      model : seqEntry,
+      el : '#main',
+      margins: {
+        left: 100,
+        right: 20,
+        top: 50,
+        },
+      }).render();
+
+pviz.FeatureDisplayer.setCustomHandler('mickey', {
+                appender : function(viewport, svgGroup, features, type) {
+                    var selCircle = svgGroup.selectAll("g.feature.internal.data." + type).data(features).enter().append("g").attr("class", "feature internal data " + type)
+                    selCircle.append("circle").attr('class', 'variation mickey')
+                    //add a 'doubltful class based on the feature 'improbable' attribute
+                    .classed('doubtful', function(ft) {
+                        return ft.improbable
+                    }).attr('r', function(ft) {
+                        return 4 * Math.sqrt(ft.count)
+                    });
+                    return selCircle;
+                },
+
+            positioner : function(viewport, d3selection) {
+                    d3selection.attr('transform', function(ft, i) {
+                        return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.5 + ft.displayTrack) + ')';
+                    });
+                    return d3selection
+                }
+            });
+
+pviz.FeatureDisplayer.setCustomHandler('sp_circle', {
+                appender : function(viewport, svgGroup, features, type) {
+                    var selCircle = svgGroup.selectAll("g.feature.internal.data." + type).data(features).enter().append("g").attr("class", "feature internal data " + type)
+                    selCircle.append("circle").attr('class', 'swissprot sp_circle')
+                    //add a 'doubltful class based on the feature 'improbable' attribute
+                    .classed('doubtful', function(ft) {
+                        return ft.improbable
+                    }).attr('r', function(ft) {
+                        return 3 * Math.sqrt(ft.count)
+                    });
+                    return selCircle;
+                },
+
+            positioner : function(viewport, d3selection) {
+                    d3selection.attr('transform', function(ft, i) {
+                        return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.5 + ft.displayTrack) + ')';
+                    });
+                    return d3selection
+                }
+            });
+
+
+
+    //pviz.FeatureDisplayer.trackHeightPerCategoryType.pfam = 1.1;
+    //pviz.FeatureDisplayer.positioners.pfam = 
+    
+
+    var pfam_fts = [];
+    function add_pfam_values(){
+    {% for keys, values in match_dict.items %}
+    pfam_fts.push(['{{ values.3 }}','{{ values.4 }}','{{ values.2 }}'])
+
+    {% endfor %}
+};
+
+add_pfam_values();
+
+/*
+    var swissprot_fts = [];
+    function add_swissprot_values(){
+    {% for keys, values in swissprot_dict.items %}
+    swissprot_fts.push(['{{ values.0 }}','{{ values.1 }}','{{ values.2 }}','{{ values.3 }}'])
+
+    {% endfor %}
+};
+
+add_swissprot_values();
+*/
+
+    var swissprot_fts = [];
+    var swissprot_var_fts = [];
+    function add_swissprot_values(){
+    {% for keys, values in swissprot_dict.items %}
+    {% if values.1 == values.2 %}
+    swissprot_var_fts.push(['{{ values.0 }}','{{ values.1 }}','{{ values.2 }}','{{ values.3 }}'])
+    {% else %}
+    swissprot_fts.push(['{{ values.0 }}','{{ values.1 }}','{{ values.2 }}','{{ values.3 }}'])
+    {% endif %}
+    {% endfor %}
+};
+
+add_swissprot_values();
+
+
+
+
+    var alamut_pd1_fts = [];
+    function add_alamut_pd1_values(){
+    {% for keys, values in alamut_pd1_dict.items %}
+    alamut_pd1_fts.push(['{{ values.0 }}','{{ values.1 }}','{{ values.2 }}'])
+
+    {% endfor %}
+};
+
+add_alamut_pd1_values();
+
+    var alamut_pd2_fts = [];
+    function add_alamut_pd2_values(){
+    {% for keys, values in alamut_pd2_dict.items %}
+    alamut_pd2_fts.push(['{{ values.0 }}','{{ values.1 }}','{{ values.2 }}'])
+
+    {% endfor %}
+};
+
+add_alamut_pd2_values();
+
+    var alamut_pd3_fts = [];
+    function add_alamut_pd3_values(){
+    {% for keys, values in alamut_pd3_dict.items %}
+    alamut_pd3_fts.push(['{{ values.0 }}','{{ values.1 }}','{{ values.2 }}'])
+
+    {% endfor %}
+};
+
+add_alamut_pd3_values();
+
+
+    var alamut_pd4_fts = [];
+    function add_alamut_pd4_values(){
+    {% for keys, values in alamut_pd4_dict.items %}
+    alamut_pd4_fts.push(['{{ values.0 }}','{{ values.1 }}','{{ values.2 }}'])
+
+    {% endfor %}
+};
+
+add_alamut_pd4_values();
+
+    var pdb_entries = [];
+    function add_pdb_values(){
+    {% for keys,values in pdb_dict.items %}
+    {% for keys_2, values_2 in pdb_stop_start_dict.items %}
+    {% if keys == keys_2 %}
+    pdb_entries.push(['{{ keys }}','{{ values_2.0 }}','{{ values_2.1 }}','{{ values.0 }}','{{ values.1|upper }}','{{ values.2 }}'])
+
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+};
+
+add_pdb_values(); 
+
+/*
+
+//http://research-pub.gene.com/pviz/examples/example-different-track-heights.html
+
+
+        pviz.FeatureDisplayer.setCustomHandler('pfam_type', {
+            appender : function(viewport, svgGroup, features, type) {
+                var sel = svgGroup.selectAll("g.feature.internal.data." + type).data(features).enter().append("g").attr("class", "feature internal data " + type)
+
+                sel.append("rect").attr('class', 'pfam pfam_type');
+
+                return sel;
+            },
+
+                positioner : function(viewport, d3selection) {
+
+                var w1 = viewport.scales.x(10) - viewport.scales.x(9);
+                var hMax = viewport.scales.y(1) * pviz.FeatureDisplayer.heightFactor('pfam_type');
+
+                d3selection.selectAll("rect.pfam.pfam_type").attr('height', hMax);
+                d3selection.selectAll("rect.pfam.pfam_type").attr('x', function(ft) {
+                    return viewport.scales.x(ft.start)*w1;
+                }).attr('width', function(ft) {
+                    return viewport.scales.x(ft.end) - viewport.scales.x(ft.start);
+                });
+
+
+                    d3selection.attr('transform', function(ft, i) {
+                        return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.1 + ft.displayTrack) + ')';
+                    });
+                    return d3selection
+                }
+        });
+
+*/
+
+        seqEntry.addFeatures(pfam_fts.map(function(ft) {
+            return {
+                category : 'pfam',
+                type : 'pfam_type',
+                start : ft[0]-1,
+                end : ft[1]-1,
+                inner_start : ft[0],
+                inner_end : ft[1],
+                text : '',
+                inner_text : ft[2],
+                count: 2,
+            }
+        }));
+
+
+        seqEntry.addFeatures(swissprot_fts.map(function(ft) {
+            return {
+                category : 'swissprot',
+                type : 'swissprot_type',
+                start : ft[1]-1,
+                end : ft[2]-1,
+                text : '',
+                inner_text : ft[3],
+                inner_start : ft[1],
+                inner_end : ft[2],
+                count: 2,
+            }
+        }));
+
+
+        seqEntry.addFeatures(swissprot_var_fts.map(function(ft) {
+            return {
+                category : 'swissprot',
+                type : 'sp_circle',
+                start : ft[1]-1,
+                end : ft[2]-1,
+                text : '',
+                inner_text : ft[3],
+                inner_start : ft[1],
+                inner_end : ft[2],
+                count: 2,
+                inner_type : ft[0]
+            }
+        }));
+
+
+        seqEntry.addFeatures(alamut_pd1_fts.map(function(ft) {
+            return {
+                category : 'alamut',
+                type : 'alamut_pd1_type',
+                start : ft[1]-1,
+                end : ft[2]-1,
+                text : '',
+                inner_text : ft[0],
+                inner_start : ft[1],
+                inner_end : ft[2],
+                
+            }
+        }));
+
+        seqEntry.addFeatures(alamut_pd2_fts.map(function(ft) {
+            return {
+                category : 'alamut',
+                type : 'alamut_pd2_type',
+                start : ft[1]-1,
+                end : ft[2]-1,
+                inner_start : ft[1],
+                inner_end : ft[2],
+                text : '',
+                inner_text : ft[0],
+                
+            }
+        }));
+
+        seqEntry.addFeatures(alamut_pd3_fts.map(function(ft) {
+            return {
+                category : 'alamut',
+                type : 'alamut_pd3_type',
+                start : ft[1]-1,
+                end : ft[2]-1,
+                inner_start : ft[1],
+                inner_end : ft[2],
+                text : '',
+                inner_text : ft[0],
+                
+            }
+        }));
+
+        seqEntry.addFeatures(alamut_pd4_fts.map(function(ft) {
+            return {
+                category : 'alamut',
+                type : 'alamut_pd4_type',
+                start : ft[1]-1,
+                end : ft[2]-1,
+                inner_start : ft[1],
+                inner_end : ft[2],
+                text : '',
+                inner_text : ft[0],
+                
+            }
+        }));
+
+        //fix pdb entry
+        seqEntry.addFeatures(pdb_entries.map(function(ft) {
+            return {
+                category : 'pdb',
+                type : 'pdb_type',
+                start : ft[1]-1,
+                end : ft[2]-1,
+                inner_start : ft[1],
+                inner_end : ft[2],
+                text : '',
+                inner_text : ft[0],
+                inner_compound : ft[3],
+                inner_title: ft[4],
+                inner_journal: ft[5], 
+                
+            }
+        }));
+
+
+            seqEntry.addFeatures([{
+                category : 'variation',
+                type : 'mickey',
+                count: 2,
+                start : {{ resi_num }}-1,
+                end : {{ resi_num }}-1
+            }]);
+
+
+
+
+            pviz.FeatureDisplayer.addMouseoverCallback(['pfam_type','swissprot_type','alamut_pd1_type','alamut_pd2_type','alamut_pd3_type','alamut_pd4_type'], function(ft) {
+                mouseOveredFT = ft;
+                var el = $('#output-mouse-over');
+                el.empty();
+                el.html('<div class="panel panel-default"> <div class="panel-body">' + 
+
+               
+
+                '<b>'+ft.inner_text+'</b>' + '<br>' +
+                'start: ' + ft.inner_start + '<br>' +
+                'end: ' + ft.inner_end
+
+                
+
+                
+                //+'{{ resi_num }}'
+                //'<a href="http://pfam.xfam.org/family/"
+
+                +'</div></div>')
+            }).addMouseoutCallback(['pfam_type'], function(ft) {
+                mouseOveredFT = undefined;
+                
+            });
+
+
+            pviz.FeatureDisplayer.addMouseoverCallback(['sp_circle'], function(ft) {
+                mouseOveredFT = ft;
+                var el = $('#output-mouse-over');
+                el.empty();
+                el.html('<div class="panel panel-default"> <div class="panel-body">' + 
+
+               
+
+                '<b>'+ft.inner_text+'</b>' + '<br>' +
+                'type: ' + ft.inner_type + '<br>' +
+                'position: ' + ft.inner_start + '<br>'
+                
+
+                
+
+                
+                //+'{{ resi_num }}'
+                //'<a href="http://pfam.xfam.org/family/"
+
+                +'</div></div>')
+            }).addMouseoutCallback(['sp_circle'], function(ft) {
+                mouseOveredFT = undefined;
+                
+            });
+
+
+            //pviz.FeatureDisplayer.addClickCallback(['pdb_type'], function(ft) {
+            pviz.FeatureDisplayer.addMouseoverCallback(['pdb_type'], function(ft) {
+                mouseOveredFT = ft;
+                var el = $('#output-pdb');
+                el.empty();
+                el.html('<div class="panel panel-default"> <div class="panel-body">' + 
+
+                '<p><b>'+ft.inner_title+'</b> (<a target="_blank" href="http://www.rcsb.org/pdb/explore/explore.do?structureId='+ft.inner_text+'">'
+                +ft.inner_text+
+                '</a>)</p>'+
+                '<p> View 3D structure in new tab, click <a target="_blank" href="http://3Dmol.csb.pitt.edu/viewer.html?pdb='+ft.inner_text +'&style=cartoon:color~spectrum">here</a>.</p>'
+                
+                
+
+                
+                //+'{{ resi_num }}'
+                //'<a href="http://pfam.xfam.org/family/"
+
+                +'</div></div>')
+            }).addMouseoutCallback(['pdb_type'], function(ft) {
+                mouseOveredFT = undefined;
+                
+            });
+
+ 
+
+
+
+
+  </script>
+<br> <br>
+
+
+
+
+
+
+
+        </div>
+        <!-- /.row-->
+
+ 
+        
+
+    </div>
+    <!-- /.container -->
+
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+
+
+
+
+
+(function($){
+
+    $(document).ready(function (){
+            $('.dropdown-toggle').dropdown();
+            
+
+    });
+
+})(jQuery);
+
+</script>
+
+</body>
+
+</html>
+
