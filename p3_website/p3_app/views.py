@@ -287,7 +287,49 @@ def index(request):
         uniprot_references = record.annotations['references']
         context['uniprot_references'] = uniprot_references
 
-                
+        secondary_structure_features = []
+        variant_features = []
+        other_uniprot_features = []
+
+        for feature in record.features:
+            if feature.qualifiers['type'] == 'strand' or feature.qualifiers['type'] == 'helix' or feature.qualifiers['type'] == 'turn':
+                if feature.qualifiers['type'] == 'strand':
+                    feature.type = 'beta_strand'
+                secondary_structure_features.append(feature)
+            elif feature.type == 'cross-link' or feature.type == 'modified residue' or feature.type == 'mutagenesis site' or feature.type == 'sequence variant' or feature.type == 'sequence conflict':
+                variant_features.append(feature)
+            else:
+                other_uniprot_features.append(feature)
+
+
+        context['uniprot_features'] = record.features
+
+        context['secondary_structure_features'] = secondary_structure_features
+        context['variant_features'] = variant_features
+        context['other_uniprot_features'] = other_uniprot_features
+
+        variation_dict = {}
+
+      
+        
+        for rsid in Brca1New.objects.values('rsid').distinct():
+            rsid = rsid['rsid']
+            if rsid.startswith('rs'):
+                variation_dict[rsid] = True
+            else:
+                continue
+            '''
+            if not rsid.startswith('rs'):
+                continue
+            else:
+                obj = Brca1New.objects.filter(rsid=rsid)[0]
+                pos = obj.codon
+                variation_dict[rsid] = pos
+            '''
+
+
+        
+        context['variation_dict'] = variation_dict        
         #add info for pubmed list - turn into dictionary of citation values
 
         #add checkpoint to make sure residues match of pdb file and residue of variation in database

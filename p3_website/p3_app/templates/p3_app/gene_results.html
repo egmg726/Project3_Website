@@ -174,11 +174,8 @@ $.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Boot
 <h2> Protein Sequence for {{ gene_id }}</h2>
 <p> <i>Aliases: {{ gene_dict.OtherAliases }} </i></p>
 </div>
-        <div class="col-lg-4" id="output-mouse-over">
-        <div class="panel panel-default"> 
-        <div class='panel-body'>
-    <b>Scroll over the domains for more information.</b> <br><br></div> </div>
-        </div>
+
+
 
   <div id="main"></div>
 <br>
@@ -192,7 +189,8 @@ $.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Boot
 
 
 
-        <div class="col-lg-12" id="output-pdb">
+
+        <div class="col-lg-6" id="output-pdb">
         <div class="panel panel-default"> 
         <div class='panel-body'>
     
@@ -201,6 +199,12 @@ $.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Boot
         </div> </div>
         </div>
 
+
+        <div class="col-lg-6" id="output-mouse-over">
+        <div class="panel panel-default"> 
+        <div class='panel-body'>
+    <b>Scroll over the domains for more information.</b> <br><br></div> </div>
+        </div>
 
 
         <div class="col-lg-12">
@@ -213,10 +217,42 @@ $.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Boot
         </h4>
       </div>
         <div class='panel-body'>
+        <table class="table">
+        <tr>
+        <th> Name </th>
+        <td> {{ gene_dict.Name }} </td>
+        </tr>
+        <tr>
+        <th> Description </th>
+        <td> {{ gene_dict.Description }} </td>
+        </tr>
+        <tr>
+        <th> Genomic Info </th>
+        <td>{% for gi in gene_dict.GenomicInfo %}
+        {% for keys,values in gi.items %}
+    
+        <p>{{ keys }}: {{ values }} </p>
+
+        {% endfor %}
+        {% endfor %}</td>
+        </tr>
+        <tr>
+        <th> Map Location </th>
+        <td> {{ gene_dict.MapLocation }} </td>
+        </tr>
+        <tr>
+        <th> Other Designations </th>
+        <td> {{ gene_dict.OtherDesignations }} </td>
+        </tr>
+
+        </table>
+        <br>
         <b>Summary: </b>{{ gene_dict.Summary }}
 
          </div> </div>
         </div> </div> 
+
+
 
 
         <div class="panel panel-default">
@@ -229,19 +265,37 @@ $.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Boot
       </div>
         <div class='panel-body'>
         
+        <table class="table">
         {% for keys, values in uniprot_comment_dict.items %}
 
 
-        <p> <b>{{ keys }}</b>: </p>
+        <tr>
 
+        <th> {{ keys }} </th>
+
+        <td>
+
+
+        
+        {% if values|length == 1 %}
 
         {% for value in values %}
-        <li style='list-style-type:none;padding-left:5px'>{{ value }}</li>
-
-
+        <p style='padding-left:17px'> {{ value }} </p>
         {% endfor %}
-        <br> <br>
+        
+        {% else %}
+        <ul style='padding-left:12px'>
+        {% for value in values %}
+        <li style='padding-bottom:5px;padding-left:4px'>{{ value }}</li>
         {% endfor %}
+        </ul>
+
+        {% endif %}
+        
+        </td>
+        </tr>
+        {% endfor %}
+        </table>
 
 
 
@@ -253,15 +307,15 @@ $.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Boot
          </div> </div>
         </div>
 
-
+<div class='col-lg-12'>
 <p> <b>Uniprot References</b> <p>
     {% for ref in uniprot_references %}
 
-    <p>{{ ref.authors }}. <a target="_blank" ahref="http://www.ncbi.nlm.nih.gov/pubmed/{{ ref.pubmed_id }}">{{ ref.title }}</a> {{ ref.journal }}</p>
+    <p>{{ ref.authors }} <a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/{{ ref.pubmed_id }}">{{ ref.title }}</a> {{ ref.journal }}</p>
 
 
     {% endfor %}
-
+</div>
 
 
   <script>
@@ -320,8 +374,111 @@ pviz.FeatureDisplayer.setCustomHandler('sp_circle', {
                 }
             });
 
+pviz.FeatureDisplayer.setCustomHandler('cross-link', {
+                appender : function(viewport, svgGroup, features, type) {
+                    var selCircle = svgGroup.selectAll("g.feature.internal.data." + type).data(features).enter().append("g").attr("class", "feature internal data " + type)
+                    selCircle.append("circle").attr('class', 'variant features cross-link')
+                    //add a 'doubltful class based on the feature 'improbable' attribute
+                    .classed('doubtful', function(ft) {
+                        return ft.improbable
+                    }).attr('r', function(ft) {
+                        return 3 * Math.sqrt(ft.count)
+                    });
+                    return selCircle;
+                },
+
+            positioner : function(viewport, d3selection) {
+                    d3selection.attr('transform', function(ft, i) {
+                        return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.5 + ft.displayTrack) + ')';
+                    });
+                    return d3selection
+                }
+            });
+
+pviz.FeatureDisplayer.setCustomHandler('modified residue', {
+                appender : function(viewport, svgGroup, features, type) {
+                    var selCircle = svgGroup.selectAll("g.feature.internal.data." + type).data(features).enter().append("g").attr("class", "feature internal data " + type)
+                    selCircle.append("circle").attr('class', 'variant features modified residue')
+                    //add a 'doubltful class based on the feature 'improbable' attribute
+                    .classed('doubtful', function(ft) {
+                        return ft.improbable
+                    }).attr('r', function(ft) {
+                        return 3 * Math.sqrt(ft.count)
+                    });
+                    return selCircle;
+                },
+
+            positioner : function(viewport, d3selection) {
+                    d3selection.attr('transform', function(ft, i) {
+                        return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.5 + ft.displayTrack) + ')';
+                    });
+                    return d3selection
+                }
+            });
 
 
+pviz.FeatureDisplayer.setCustomHandler('mutagenesis site', {
+                appender : function(viewport, svgGroup, features, type) {
+                    var selCircle = svgGroup.selectAll("g.feature.internal.data." + type).data(features).enter().append("g").attr("class", "feature internal data " + type)
+                    selCircle.append("circle").attr('class', 'variant features mutagenesis site')
+                    //add a 'doubltful class based on the feature 'improbable' attribute
+                    .classed('doubtful', function(ft) {
+                        return ft.improbable
+                    }).attr('r', function(ft) {
+                        return 3 * Math.sqrt(ft.count)
+                    });
+                    return selCircle;
+                },
+
+            positioner : function(viewport, d3selection) {
+                    d3selection.attr('transform', function(ft, i) {
+                        return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.5 + ft.displayTrack) + ')';
+                    });
+                    return d3selection
+                }
+            });
+
+pviz.FeatureDisplayer.setCustomHandler('sequence conflict', {
+                appender : function(viewport, svgGroup, features, type) {
+                    var selCircle = svgGroup.selectAll("g.feature.internal.data." + type).data(features).enter().append("g").attr("class", "feature internal data " + type)
+                    selCircle.append("circle").attr('class', 'variant features sequence conflict')
+                    //add a 'doubltful class based on the feature 'improbable' attribute
+                    .classed('doubtful', function(ft) {
+                        return ft.improbable
+                    }).attr('r', function(ft) {
+                        return 3 * Math.sqrt(ft.count)
+                    });
+                    return selCircle;
+                },
+
+            positioner : function(viewport, d3selection) {
+                    d3selection.attr('transform', function(ft, i) {
+                        return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.5 + ft.displayTrack) + ')';
+                    });
+                    return d3selection
+                }
+            });
+
+pviz.FeatureDisplayer.setCustomHandler('sequence variant', {
+                appender : function(viewport, svgGroup, features, type) {
+                    var selCircle = svgGroup.selectAll("g.feature.internal.data." + type).data(features).enter().append("g").attr("class", "feature internal data " + type)
+                    selCircle.append("circle").attr('class', 'variant features sequence variant')
+                    //add a 'doubltful class based on the feature 'improbable' attribute
+                    .classed('doubtful', function(ft) {
+                        return ft.improbable
+                    }).attr('r', function(ft) {
+                        return 3 * Math.sqrt(ft.count)
+                    });
+                    return selCircle;
+                },
+
+            positioner : function(viewport, d3selection) {
+                    d3selection.attr('transform', function(ft, i) {
+                        return 'translate(' + viewport.scales.x(ft.start) + ',' + viewport.scales.y(0.5 + ft.displayTrack) + ')';
+                    });
+                    return d3selection
+                }
+            });
     //pviz.FeatureDisplayer.trackHeightPerCategoryType.pfam = 1.1;
     //pviz.FeatureDisplayer.positioners.pfam = 
     
@@ -420,6 +577,42 @@ add_alamut_pd4_values();
 
 add_pdb_values(); 
 
+    var other_uniprot_features = [];
+    function add_other_uniprot_features(){
+{% for feature in other_uniprot_features %}
+
+    other_uniprot_features.push(['{{ feature.type }}','{{ feature.location.start }}','{{ feature.location.end }}','{{ feature.qualifiers.description }}', '{{ feature.qualifiers.variation }}','{{ feature.qualifiers.type }}','{{ feature.qualifiers.id }}','{{ feature.qualifiers.original }}'])
+
+{% endfor %}
+};
+
+add_other_uniprot_features();
+
+    var secondary_structure_features = [];
+    function add_secondary_structure_features(){
+{% for feature in secondary_structure_features %}
+
+    secondary_structure_features.push(['{{ feature.type }}','{{ feature.location.start }}','{{ feature.location.end }}','{{ feature.qualifiers }}'])
+
+{% endfor %}
+};
+
+add_secondary_structure_features();
+
+
+
+    var variant_features = [];
+    function add_variant_features(){
+{% for feature in variant_features %}
+
+    variant_features.push(['{{ feature.type }}','{{ feature.location.start }}','{{ feature.location.end }}','{{ feature.qualifiers.description }}', '{{ feature.qualifiers.variation }}','{{ feature.qualifiers.type }}','{{ feature.qualifiers.id }}','{{ feature.qualifiers.original }}'])
+
+{% endfor %}
+};
+
+add_variant_features();
+
+
 /*
 
 //http://research-pub.gene.com/pviz/examples/example-different-track-heights.html
@@ -455,6 +648,58 @@ add_pdb_values();
         });
 
 */
+
+
+
+        seqEntry.addFeatures(secondary_structure_features.map(function(ft) {
+            return {
+                category : 'secondary structure',
+                type : ft[0],
+                start : ft[1],
+                end : ft[2]-1,
+                text : '',
+                inner_text : ft[0],
+               
+            }
+        }));
+
+        seqEntry.addFeatures(variant_features.map(function(ft) {
+            return {
+                category : 'variant features',
+                type : ft[0],
+                start : ft[1],
+                end : ft[2]-1,
+                inner_end : ft[2],
+                text : '',
+                inner_description : ft[3],
+                inner_variation : ft[4],
+                inner_type : ft[5],
+                inner_id : ft[6],
+                inner_original : ft[7],
+                count : 2,
+               
+            }
+        }));
+
+
+        seqEntry.addFeatures(other_uniprot_features.map(function(ft) {
+            return {
+                category : 'uniprot',
+                type : ft[0],
+                start : ft[1],
+                end : ft[2]-1,
+                inner_start : Number(ft[1])+1,
+                inner_end : ft[2],
+                text : '',
+                inner_description : ft[3],
+                inner_variation : ft[4],
+                inner_type : ft[5],
+                inner_id : ft[6],
+                inner_original : ft[7],
+                count : 2,
+            }
+        }));
+
 
         seqEntry.addFeatures(pfam_fts.map(function(ft) {
             return {
@@ -577,6 +822,7 @@ add_pdb_values();
         }));
 
 
+/*
             seqEntry.addFeatures([{
                 category : 'variation',
                 type : 'mickey',
@@ -585,7 +831,7 @@ add_pdb_values();
                 end : {{ resi_num }}-1
             }]);
 
-
+*/
 
 
             pviz.FeatureDisplayer.addMouseoverCallback(['pfam_type','swissprot_type','alamut_pd1_type','alamut_pd2_type','alamut_pd3_type','alamut_pd4_type'], function(ft) {
@@ -611,6 +857,108 @@ add_pdb_values();
                 mouseOveredFT = undefined;
                 
             });
+
+            pviz.FeatureDisplayer.addMouseoverCallback(['sequence variant'], function(ft) {
+                mouseOveredFT = ft;
+                var el = $('#output-mouse-over');
+                el.empty();
+                el.html('<div class="panel panel-default"> <div class="panel-body">' + 
+
+               
+                '<b>'+ft.inner_id+'</b>' + '<br>' +
+                '<i>'+ft.inner_description+'</i>' + '<br>' +
+                'variant type: ' + ft.inner_type + '<br>' +
+                'position: ' + ft.inner_end + '<br>' +
+                'variation: '+ ft.inner_variation + '<br>' +
+                'original: '+ ft.inner_original + '<br>'
+
+                
+
+                
+                //+'{{ resi_num }}'
+                //'<a href="http://pfam.xfam.org/family/"
+
+                +'</div></div>')
+            }).addMouseoutCallback(['pfam_type'], function(ft) {
+                mouseOveredFT = undefined;
+                
+            });
+
+            pviz.FeatureDisplayer.addMouseoverCallback(['modified residue','cross-link','mutagenesis site','sequence conflict'], function(ft) {
+                mouseOveredFT = ft;
+                var el = $('#output-mouse-over');
+                el.empty();
+                el.html('<div class="panel panel-default"> <div class="panel-body">' + 
+
+               
+                
+                '<b>'+ft.inner_description+'</b>' + '<br>' +
+                'variant type: ' + ft.inner_type + '<br>' +
+                'position: ' + ft.inner_end + '<br>' +
+                'variation: '+ ft.inner_variation + '<br>' +
+                'original: '+ ft.inner_original + '<br>'
+
+                
+
+                
+                //+'{{ resi_num }}'
+                //'<a href="http://pfam.xfam.org/family/"
+
+                +'</div></div>')
+            }).addMouseoutCallback(['pfam_type'], function(ft) {
+                mouseOveredFT = undefined;
+                
+            });
+
+            pviz.FeatureDisplayer.addMouseoverCallback(['splice variant'], function(ft) {
+                mouseOveredFT = ft;
+                var el = $('#output-mouse-over');
+                el.empty();
+                el.html('<div class="panel panel-default"> <div class="panel-body">' + 
+
+               
+                '<b>'+ft.inner_id+'</b>' + '<br>' +
+                '<i>'+ft.inner_description+'</i>' + '<br>' +
+                'variant type: ' + ft.inner_type + '<br>' +
+                'start: ' + ft.inner_start + '<br>' +
+                'end: '+ ft.inner_end + '<br>'
+
+                
+
+                
+                //+'{{ resi_num }}'
+                //'<a href="http://pfam.xfam.org/family/"
+
+                +'</div></div>')
+            }).addMouseoutCallback(['pfam_type'], function(ft) {
+                mouseOveredFT = undefined;
+                
+            });
+
+            pviz.FeatureDisplayer.addMouseoverCallback(['domain','chain','region of interest','compositionally biased region','zinc finger region'], function(ft) {
+                mouseOveredFT = ft;
+                var el = $('#output-mouse-over');
+                el.empty();
+                el.html('<div class="panel panel-default"> <div class="panel-body">' + 
+
+               
+                '<b>'+ft.inner_description+'</b>' + '<br>' +
+                'region type: ' + ft.inner_type + '<br>' +
+                'start: ' + ft.inner_start + '<br>' +
+                'end: '+ ft.inner_end + '<br>'
+
+                
+
+                
+                //+'{{ resi_num }}'
+                //'<a href="http://pfam.xfam.org/family/"
+
+                +'</div></div>')
+            }).addMouseoutCallback(['pfam_type'], function(ft) {
+                mouseOveredFT = undefined;
+                
+            });
+
 
 
             pviz.FeatureDisplayer.addMouseoverCallback(['sp_circle'], function(ft) {

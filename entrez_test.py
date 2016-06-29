@@ -18,18 +18,18 @@ def get_entrez_gene_dict(gene_id):
 
 Entrez.email = 'emma.gail15@imperial.ac.uk'
 #handle = Entrez.esearch(db='snp',term='rs80356994')
-handle = Entrez.esummary(db='snp',id='80356994',rettype='gb', retmode='text')
+#handle = Entrez.esummary(db='snp',id='80356994',rettype='gb', retmode='text')
 #handle = Entrez.esearch(db='nucleotide',retmax=10,term='BRCA1[gene] AND human[orgn]')
-#handle = Entrez.esummary(db='gene',id='672',retmode='text')
+handle = Entrez.esummary(db='gene',id='672',retmode='text')
 #record = handle.read()
 record = Entrez.read(handle)
 handle.close()
 
 print record
 
-#entrez_dict = dict(record['DocumentSummarySet'])
-#gene_dict = dict(entrez_dict['DocumentSummary'][0])
-#print gene_dict
+entrez_dict = dict(record['DocumentSummarySet'])
+gene_dict = dict(entrez_dict['DocumentSummary'][0])
+print gene_dict
 #print gene_dict['Description']
 #print gene_dict['Summary']
 

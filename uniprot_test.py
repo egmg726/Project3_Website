@@ -20,13 +20,15 @@ for ref in record.annotations['references']:
 
 for feature in record.features:
     
+    print feature.qualifiers
+    break
     feature.type
     feature.location
     feature.id
     feature.qualifiers
     #print feature.qualifiers
 #str(feature.location).split(':')
-    break
+    
 
 #handle = open('P38398_uniprot.xml','rU')
 #for record in SeqIO.parse(handle,'uniprot-xml'):

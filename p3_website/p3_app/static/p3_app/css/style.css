@@ -8,6 +8,34 @@ circle.variation.mickey:hover {
        fill-opacity: 0.2;
 }
 
+circle.variant.features.cross-link {
+       fill: #E59A27;
+       fill-opacity: 0.5;
+}
+
+circle.variant.features.modified.residue {
+       fill: blue;
+       fill-opacity: 0.5;
+}
+
+circle.variant.features.mutagenesis.site {
+       fill: red;
+       fill-opacity: 0.5;
+}
+
+
+circle.variant.features.sequence.variant {
+       fill: purple;
+       fill-opacity: 0.5;
+}
+
+circle.variant.features.sequence.conflict {
+       fill: green;
+       fill-opacity: 0.5;
+}
+
+
+
 circle.swissprot.sp_circle {
        fill: #45A4D2;
        fill-opacity: 0.8;
@@ -52,6 +80,19 @@ circle.swissprot.sp_circle:hover {
            
         }
 
+        g.feature.pdb rect.feature {
+            fill: #D63B3B;
+            fill-opacity: 0.8;
+            
+            
+        }
+        g.feature.pdb:hover rect.feature {
+            fill: #D63B3B;
+            fill-opacity: 0.2;
+            
+           
+        }
+
         g.feature.alamut rect.feature {
             fill: green;
             fill-opacity: 0.8;
@@ -64,6 +105,60 @@ circle.swissprot.sp_circle:hover {
             
            
         }
+
+        g.feature.uniprot rect.feature {
+            fill: #F1AA24;
+            fill-opacity: 0.8;
+            
+            
+        }
+        g.feature.uniprot:hover rect.feature {
+            fill: #F1AA24;
+            fill-opacity: 0.2;
+            
+           
+        }
+
+        g.feature.uniprot.splice.variant rect.feature {
+            fill: #5c6f99;
+            fill-opacity: 0.8;
+            
+            
+        }
+        g.feature.uniprot.splice.variant:hover rect.feature {
+            fill: #5c6f99;
+            fill-opacity: 0.2;
+            
+           
+        }
+
+        g.feature.uniprot.domain rect.feature {
+            fill: #115051;
+            fill-opacity: 0.8;
+            
+            
+        }
+        g.feature.uniprot.domain:hover rect.feature {
+            fill: #115051;
+            fill-opacity: 0.2;
+            
+           
+        }
+
+        g.feature.uniprot.chain rect.feature {
+            fill: #349695;
+            fill-opacity: 0.8;
+            
+            
+        }
+        g.feature.uniprot.chain:hover rect.feature {
+            fill: #349695;
+            fill-opacity: 0.2;
+            
+           
+        }
+
+
 
 
 tr:hover {

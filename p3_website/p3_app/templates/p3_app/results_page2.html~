@@ -605,6 +605,7 @@ data-style1='stick'></div></div>
 </div>
 
 <div class="row col-lg-12">
+<div class='col-lg-8'>
                    {% if rsid != False %}
                     <h2>{{ rsid }}</h2>
                     {% elif chr_num != False %}
@@ -619,7 +620,7 @@ data-style1='stick'></div></div>
                     {% endif %}
                     </h2>
                     {% endif %}
-
+</div>
                 <!--
                 <table>
                 <tr>
@@ -635,6 +636,14 @@ data-style1='stick'></div></div>
                 <td> {{ brca1_object.hgvs_prot }} </td>
                 </tr>
                 </table> -->
+
+<div class="col-lg-4">
+<button id="collapse-init" class="btn btn-primary">
+    Show all panels
+</button> </div>
+
+
+
                 <div class='col-lg-6'>
                 <table class='table'>
                 <tr>
@@ -675,26 +684,244 @@ data-style1='stick'></div></div>
                 {% endif %}
                 </table> 
 
+
+
+
+<div class="panel panel-default">
+  <div class="panel-heading"> <h4 class='panel-title'>
+<svg width="16" height="16">
+<circle cx="8" cy="8" r="5" stroke="black" stroke-width="1" fill="rgb(155,0,155)" />
+</svg>
+<b> SuSPect Score: </b> {{ brca1_object.suspect_score }} </h4>
+
+</div>
+  <div class="panel-body">
+
+          
+        
+
+<div style='text-align:center'>
+ <svg width="403" height="100">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:rgb(0,0,255);stop-opacity:1" />
+      <stop offset="100%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect x="3" y="20" rx="20" ry="20" width="400" height="50" fill='url(#grad1)'
+  style="stroke:black;stroke-width:2;opacity:0.8" />
+
+  <line x1="{{ ss_img_loc }}" y1="20" x2="{{ ss_img_loc }}" y2="70" style="stroke:black;stroke-width:8" />
+    <text x="3" y="85" fill="black">neutral</text>
+    <text x="326" y="85" fill="black">deleterious</text>
+
+</svg> 
+</div>
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+</div> <!-- end of col-lg-6 -->
+<!--
+    </div>
+
+<div class='col-lg-6'> -->
+
+
+<div class='col-lg-6'>
+
+
+<div class="panel-group" id="accordion">
+{% if brca1_object.alamut_siftprediction != None %}
+
     <div class="panel panel-default">
-      <div class="panel-heading">
+      <div class="panel-heading" data-toggle="collapse" data-target="#sift_panel">
+        <h4 class="panel-title">
+          
+        <canvas id='sift_circle' width='16' height='16'> </canvas> <b>SIFT</b>
+      
+        </h4>
+      </div>
+      <div id="sift_panel" class="panel-collapse collapse">
+        <div class="panel-body">
+<div class='row'>
+<div class='col-sm-4'>
+<p style='text-align:center'><b>prediction </b></p> </div>
+<div class='col-sm-4'>
+<p style='text-align:center'><b>weight </b></p>  </div>
+<div class='col-sm-4'>
+<p style='text-align:center'><b>median </b></p>  </div>
+</div>
+<div class='row'>
+<div class='col-sm-4'>
+<p style='text-align:center'>{{ brca1_object.alamut_siftprediction|lower }}</p> </div>
+<div class='col-sm-4'>
+<p style='text-align:center'>{{ brca1_object.alamut_siftweight }}</p> </div>
+<div class='col-sm-4'>
+<p style='text-align:center'>{{ brca1_object.alamut_siftmedian }}</p> </div>
+</div>
+
+
+</div>
+      </div> </div>
+  
+
+{% endif %}
+
+
+
+{% if brca1_object.alamut_mappprediction != '' %}
+    <div class="panel panel-default">
+      <div class="panel-heading" data-toggle="collapse" data-target="#mapp_panel">
+        <h4 class="panel-title">
+          
+        <canvas id='mapp_circle' width='16' height='16'> </canvas> <b>MAPP</b>
+      
+        </h4>
+      </div>
+      <div id="mapp_panel" class="panel-collapse collapse">
+        <div class="panel-body">
+<div class='row'>
+<div class='col-sm-4'>
+<p style='text-align:center'><b>prediction </b></p> </div>
+<div class='col-sm-4'>
+<p style='text-align:center'><b>p-value </b></p>  </div>
+<div class='col-sm-4'>
+<p style='text-align:center'><b>p-value median </b></p>  </div>
+</div>
+<div class='row'>
+<div class='col-sm-4'>
+<p style='text-align:center'>{{ brca1_object.alamut_mappprediction }}</p> </div>
+<div class='col-sm-4'>
+<p style='text-align:center'>{{ brca1_object.alamut_mapppvalue }}</p> </div>
+<div class='col-sm-4'>
+<p style='text-align:center'>{{ brca1_object.alamut_mapppvaluemedian }}</p> </div>
+</div>
+
+
+</div> </div>
+      </div>
+
+
+{% endif %}
+
+
+
+{% if brca1_object.polyphen2_hvar_prediction != '' %}
+    <div class="panel panel-default">
+      <div class="panel-heading" data-toggle="collapse" data-target="#polyphen_panel">
+        <h4 class="panel-title">
+          
+        <canvas id='polyphen_circle' width='16' height='16'> </canvas> <b>PolyPhen2</b>
+      
+        </h4>
+      </div>
+      <div id="polyphen_panel" class="panel-collapse collapse">
+        <div class="panel-body">
+<p> <b>prediction based on {{ brca1_object.polyphen2_based_on }}:</b> {{ brca1_object.polyphen2_prediction }} </p> 
+<h5 style='text-align:center'> HumDiv </h5>
+<div class='row'>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>prediction </b></p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>class </b></p>  </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>prob </b></p>  </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>fpr </b></p>  </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>tpr </b></p>  </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>fdr </b></p>  </div>
+</div>
+<div class='row'>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_prediction }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_class }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_prob }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_fpr }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_tpr }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_fdr }}</p> </div>
+
+</div> <!-- end row -->
+
+
+<h5 style='text-align:center'> HumVar </h5>
+<div class='row'>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>prediction </b></p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>class </b></p>  </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>prob </b></p>  </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>fpr </b></p>  </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>tpr </b></p>  </div>
+<div class='col-sm-2'>
+<p style='text-align:center'><b>fdr </b></p>  </div>
+</div>
+<div class='row'>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_prediction }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_class }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_prob }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_fpr }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_tpr }}</p> </div>
+<div class='col-sm-2'>
+<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_fdr }}</p> </div>
+</div>
+
+
+
+</div>
+      </div>
+  </div> 
+
+{% endif %}
+
+
+
+{% if brca1_object.muttaster_model != '' %}
+
+    <div class="panel panel-default">
+      <div class="panel-heading" data-toggle="collapse" data-target="#mutation_taster_panel">
         <h4 class="panel-title">
           
          <b>Mutation Taster</b>
       
         </h4>
       </div>
-      
+       <div id="mutation_taster_panel" class="panel-collapse collapse">
         <div class="panel-body">
 
-{% if brca1_object.muttaster_model != '' %}
+
 {% for keys,values in muttaster_model_dict.items %}
 {% if keys == brca1_object.muttaster_model %}
 <p> <b> model: </b> {{ values }} </p>
 {% endif %}
 {% endfor %}
-{% endif %}
+
 {% if brca1_object.muttaster_prediction != '' %}
 <p> <b>prediction: </b> {{ brca1_object.muttaster_prediction }}</p>
+{% endif %}
 
 {% if brca1_object.muttaster_features != '' %}
 <p> <b> features: </b>
@@ -705,15 +932,17 @@ data-style1='stick'></div></div>
 </p>
 {% endif %}
 
-{% endif %}
+
 
 
 </div>
+</div>
       </div> 
+{% endif %}
 
 {% if brca1_object.dmudb_clasif != '' %}
     <div class="panel panel-default">
-      <div class="panel-heading">
+      <div class="panel-heading" data-toggle="collapse" data-target="#dmudb_panel">
         <h4 class="panel-title">
           
          <b>Diagnostic Mutation Database (DMuDB)</b>
@@ -721,6 +950,7 @@ data-style1='stick'></div></div>
         </h4>
       </div>
       
+        <div id="dmudb_panel" class="panel-collapse collapse">
         <div class="panel-body">
 
 
@@ -734,12 +964,59 @@ data-style1='stick'></div></div>
 
 
 </div>
-      </div> 
+      </div> </div>
 {% endif %}
 
 {% if brca1_object.evs_genotypecount_all != '' %}
     <div class="panel panel-default">
-      <div class="panel-heading">
+      <div class="panel-heading" data-toggle="collapse" data-target="#alamut_panel">
+        <h4 class="panel-title">
+          
+         <b>Alamut</b>
+      
+        </h4>
+      </div>
+      
+<div id="alamut_panel" class="panel-collapse collapse">
+        <div class="panel-body">
+
+
+{{ brca1_object.alamut_conservedOrthos }}
+{{ brca1_object.alamut_conservedDistSpecies }}
+{{ brca1_object.alamut_blosum45 }}
+{{ brca1_object.alamut_blosum62 }}
+{{ brca1_object.alamut_blosum80 }}
+{{ brca1_object.alamut_distNearestSS }}
+{{ brca1_object.alamut_nearestSSType }}
+{{ brca1_object.alamut_nearestSSChange }}
+{{ brca1_object.alamut_wtSSFScore }}
+{{ brca1_object.alamut_varSSFScore }}
+{{ brca1_object.alamut_changeSSFScore }}
+{{ brca1_object.alamut_wtMaxEntScore }}
+{{ brca1_object.alamut_varMaxEntScore }}
+{{ brca1_object.alamut_changeMaxEntScore }}
+{{ brca1_object.alamut_wtNNSScore }}
+{{ brca1_object.alamut_varNNSScore }}
+{{ brca1_object.alamut_changeNNSScore }}
+{{ brca1_object.alamut_wtGSScore }}
+{{ brca1_object.alamut_varGSScore }}
+{{ brca1_object.alamut_changeGSScore }}
+{{ brca1_object.alamut_wtHSFScore }}
+{{ brca1_object.alamut_varHSFScore }}
+{{ brca1_object.alamut_changeHSFScore }}
+{{ brca1_object.alamut_localSpliceEffect }}
+
+
+
+</div>
+      </div> </div>
+{% endif %}
+
+
+
+{% if brca1_object.evs_genotypecount_all != '' %}
+    <div class="panel panel-default">
+      <div class="panel-heading" data-toggle="collapse" data-target="#evs_panel">
         <h4 class="panel-title">
           
          <b>Exome Variant Server (EVS)</b>
@@ -747,6 +1024,7 @@ data-style1='stick'></div></div>
         </h4>
       </div>
       
+<div id="evs_panel" class="panel-collapse collapse">
         <div class="panel-body">
 
 
@@ -757,19 +1035,251 @@ data-style1='stick'></div></div>
 <p><b> African-American:</b> {{ brca1_object.evs_genotypecount_aa }}</p>
 <br>
 
-<p> Polyphen prediction: {{ brca1_object.evs_polyphen }} >/p>
+<p> Polyphen prediction: {{ brca1_object.evs_polyphen }} </p>
 
 
 
 
 
 </div>
-      </div> 
+      </div> </div>
 {% endif %}
+
+
+{% if brca1_object.iarc_class != '' %}
+    <div class="panel panel-default">
+      <div class="panel-heading" data-toggle="collapse" data-target="#iarc_panel">
+        <h4 class="panel-title">
+          
+         <b>International Agency for Research on Cancer</b>
+      
+        </h4>
+      </div>
+      
+<div id="iarc_panel" class="panel-collapse collapse">
+        <div class="panel-body">
+
+<table class="table">
+<tr>
+<th> Class </th>
+<td> {{ brca1_object.iarc_class }} </td>
+</tr>
+<tr>
+<th> </th>
+<td> {{ brca1_object.iarc_posterior_prob }} </td>
+</tr>
+<tr>
+<th> </th>
+<td> {{ brca1_object.iarc_align_gvgd_priorpb }} </td>
+</tr>
+<tr>
+<th> </th>
+<td>{{ brca1_object.iarc_splicing_priorpb }}  </td>
+</tr>
+<tr>
+<th> </th>
+<td> {{ brca1_object.iarc_combined_priorpb }}</td>
+</tr>
+<tr>
+<th> </th>
+<td> {{ brca1_object.iarc_segregation_lr }} </td>
+</tr>
+<tr>
+<th> </th>
+<td> {{ brca1_object.iarc_pathology_lr }} </td>
+</tr>
+<tr>
+<th> </th>
+<td> {{ brca1_object.iarc_sumfamily_lr }} </td>
+</tr>
+<tr>
+<th> </th>
+<td> {{ brca1_object.iarc_cooccurrence_lr }} </td>
+</tr>
+<tr>
+<th> </th>
+<td> {{ brca1_object.iarc_product_of_lr }}</td>
+</tr>
+</table>
+
+</div>
+      </div> </div>
+{% endif %}
+
+
+    <div class="panel panel-default">
+      <div class="panel-heading" data-toggle="collapse" data-target="#literature_panel">
+        <h4 class="panel-title">
+          
+         <b>Literature Review</b>
+      
+        </h4>
+      </div>
+      
+<div id="literature_panel" class="panel-collapse collapse">
+        <div class="panel-body">
+
+{% if brca1_object.lindor_posterior_pb_deleterious != '' %}
+<p> From <a href='http://www.ncbi.nlm.nih.gov/pubmed/21990134'>Lindor et. al</a>:</p>
+<table class="table">
+<tr>
+<th> Odds in Favor of Casuality:  </th>
+<td>{{ brca1_object.lindor_odds_causality }} </td>
+</tr>
+<tr>
+<th> Prior Probability of being Deleterious: </th>
+<td>{{ brca1_object.lindor_prior_pb_deleterious }} </td>
+</tr>
+<tr>
+<th> Posterior Probability of being Deleterious: </th>
+<td>{{ brca1_object.lindor_posterior_pb_deleterious }} </td>
+</tr>
+</table>
+{% endif %}
+
+{% if brca1_object.easton_class != '' %}
+<p> From <a href='http://www.ncbi.nlm.nih.gov/pubmed/17924331'>Easton et. al</a>:</p>
+<table class="table">
+<tr>
+<th> Class:  </th>
+<td>{{ brca1_object.easton_class }} </td>
+</tr>
+<tr>
+<th> Odds Causality: </th>
+<td>{{ brca1_object.easton_odds_causality }} </td>
+</tr>
+<tr>
+<th> Odds Neutrality: </th>
+<td>{{ brca1_object.easton_odds_neutrality }} </td>
+</tr>
+</table>
+<p style='text-align:center'> log<sub>10</sub>-likelihood ratio Scores </p>
+<table class="table">
+<tr> 
+<th> Family History:</th>
+<td>{{ brca1_object.easton_family_history_llr }} </td>
+</tr>
+<tr>
+<th> Co-Occurrence: </th>
+<td>{{ brca1_object.easton_coocurrence_llr }} </td>
+</tr>
+<tr>
+<th> Co-Segregation: </th>
+<td>{{ brca1_object.easton_cosegregation_llr }} </td>
+</tr>
+<tr>
+<th> Combined: </th>
+<td>{{ brca1_object.easton_combined_llr }} </td>
+</tr>
+</table>
+
+
+{% endif %}
+
+{% if brca1_object.houdayer_splice_class != '' %}
+<p> From <a href='http://www.ncbi.nlm.nih.gov/pubmed/22505045'>Houdayer et. al</a>:</p>
+<table class='table'>
+{% if brca1_object.houdayer_splice_class != '' %}
+<tr>
+<th> Splice Class: </th>
+<td> {{ brca1_object.houdayer_splice_class }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.houdayer_ssf != '' %}
+<tr>
+<th> Splice Site Finder: </th>
+<td> {{ brca1_object.houdayer_ssf }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.houdayer_mes != '' %}
+<tr>
+<th> MaxEntScan: </th>
+<td> {{ brca1_object.houdayer_mes }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.houdayer_nnsplice != '' %}
+<tr>
+<th> Splice Site Prediction by Neural Network: </th>
+<td> {{ brca1_object.houdayer_nnsplice }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.houdayer_assa != '' %}
+<tr>
+<th> ASSA: </th>
+<td> {{ brca1_object.houdayer_assa }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.houdayer_consequence != '' %}
+<tr>
+<th> Consequence: </th>
+<td> {{ brca1_object.houdayer_consequence }} </td>
+</tr>
+{% endif %}
+</table>
+
+{% endif %}
+
+{% if brca1_object.bouwman_mutation_type != '' %}
+<p>From Bouwman et. al </p>
+<table class='table'>
+{% if brca1_object.bouwman_mutation_type != '' %}
+<tr>
+<th> </th>
+<td> {{ brca1_object.bouwman_mutation_type }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.bouwman_AlignGVGD != '' %}
+<tr>
+<th> </th>
+<td> {{ brca1_object.bouwman_AlignGVGD }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.bouwman_predicted_splice_effect != '' %}
+<tr>
+<th> </th>
+<td> {{ brca1_object.bouwman_predicted_splice_effect }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.bouwman_lit_predictions != '' %}
+<tr>
+<th> </th>
+<td> {{ brca1_object.bouwman_lit_predictions }}</td>
+</tr>
+{% endif %}
+{% if brca1_object.bouwman_growth != '' %}
+<tr>
+<th> </th>
+<td> {{ brca1_object.bouwman_growth }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.bouwman_ic50 != '' %}
+<tr>
+<th> </th>
+<td> {{ brca1_object.bouwman_ic50 }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.bouwman_classification != '' %}
+<tr>
+<th> </th>
+<td> {{ brca1_object.bouwman_classification }} </td>
+</tr>
+{% endif %}
+
+
+
+
+</table>
+{% endif %}
+
+</div>
+      </div> </div>
+
+
+
 
 {% if brca1_object.tgp_genotypecounts_all != '' %}
     <div class="panel panel-default">
-      <div class="panel-heading">
+      <div class="panel-heading" data-toggle="collapse" data-target="#tgp_panel">
         <h4 class="panel-title">
           
          <b>The Gene Partnership (TGP)</b>
@@ -777,10 +1287,11 @@ data-style1='stick'></div></div>
         </h4>
       </div>
       
+<div id="tgp_panel" class="panel-collapse collapse">
         <div class="panel-body">
 
-
-<table class='table'>
+<div style='overflow:auto'>
+<table class="table">
 <tr>
     <th> </th>
 {% if brca1_object.tgp_genotypecounts_all != '' %}
@@ -853,29 +1364,35 @@ data-style1='stick'></div></div>
     <td> {{ brca1_object.tgp_popsize_asn }} </td>
 {% endif %}
 </tr>
+
+
 </table>
-
-
-
-
 </div>
+
+
+{% if brca1_object.tgp_ref != '' %}
+<p>Reference: {{ brca1_object.tgp_ref }} </p>
+{% endif %}
+
+</div> </div>
       </div>
 {% endif %}
 
 
+
+
 {% if brca1_object.alamut_agvgdclass != '' %}
 <div class="panel panel-default">
-  <div class="panel-heading"> <h4 class='panel-title'>
+  <div class="panel-heading" data-toggle="collapse" data-target="#agvgd_panel"> <h4 class='panel-title'>
 <svg width="16" height="16">
 <circle cx="8" cy="8" r="5" stroke="black" stroke-width="1" fill="rgb(155,0,155)" />
 </svg>
 <b> Align-GVGD:</b> Class {{ brca1_object.alamut_agvgdclass }}</h4>
 
 </div>
+<div id="agvgd_panel" class="panel-collapse collapse">
   <div class="panel-body">
 
-          
-        
 
 <div style='text-align:center'>
 <p>likelihood of interfering with function</p>
@@ -910,210 +1427,26 @@ data-style1='stick'></div></div>
 </div>
 </div>
 
-</div> 
+</div> </div>
 {% endif %}
 
 
 
 
-</div>
-<!--
-    </div>
-
-<div class='col-lg-6'> -->
+</div><!-- end of accordian div -->
 
 
-<div class='col-lg-6'>
-{% if brca1_object.alamut_siftprediction != None %}
-
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h4 class="panel-title">
-          
-        <canvas id='sift_circle' width='16' height='16'> </canvas> <b>SIFT</b>
-      
-        </h4>
-      </div>
-      
-        <div class="panel-body">
-<div class='row'>
-<div class='col-sm-4'>
-<p style='text-align:center'><b>prediction </b></p> </div>
-<div class='col-sm-4'>
-<p style='text-align:center'><b>weight </b></p>  </div>
-<div class='col-sm-4'>
-<p style='text-align:center'><b>median </b></p>  </div>
-</div>
-<div class='row'>
-<div class='col-sm-4'>
-<p style='text-align:center'>{{ brca1_object.alamut_siftprediction|lower }}</p> </div>
-<div class='col-sm-4'>
-<p style='text-align:center'>{{ brca1_object.alamut_siftweight }}</p> </div>
-<div class='col-sm-4'>
-<p style='text-align:center'>{{ brca1_object.alamut_siftmedian }}</p> </div>
-</div>
 
 
-</div>
-      </div>
-  
+</div> <!-- col-6 ?? -->
 
-{% endif %}
-
-{% if brca1_object.alamut_mappprediction != '' %}
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h4 class="panel-title">
-          
-        <canvas id='mapp_circle' width='16' height='16'> </canvas> <b>MAPP</b>
-      
-        </h4>
-      </div>
-      
-        <div class="panel-body">
-<div class='row'>
-<div class='col-sm-4'>
-<p style='text-align:center'><b>prediction </b></p> </div>
-<div class='col-sm-4'>
-<p style='text-align:center'><b>p-value </b></p>  </div>
-<div class='col-sm-4'>
-<p style='text-align:center'><b>p-value median </b></p>  </div>
-</div>
-<div class='row'>
-<div class='col-sm-4'>
-<p style='text-align:center'>{{ brca1_object.alamut_mappprediction }}</p> </div>
-<div class='col-sm-4'>
-<p style='text-align:center'>{{ brca1_object.alamut_mapppvalue }}</p> </div>
-<div class='col-sm-4'>
-<p style='text-align:center'>{{ brca1_object.alamut_mapppvaluemedian }}</p> </div>
-</div>
-
-
-</div>
-      </div>
-
-
-{% endif %}
-
-<div class="panel panel-default">
-  <div class="panel-heading"> <h4 class='panel-title'>
-<svg width="16" height="16">
-<circle cx="8" cy="8" r="5" stroke="black" stroke-width="1" fill="rgb(155,0,155)" />
-</svg>
-<b> SuSPect Score: </b> {{ brca1_object.suspect_score }} </h4>
-
-</div>
-  <div class="panel-body">
-
-          
-        
-
-<div style='text-align:center'>
- <svg width="403" height="100">
-  <defs>
-    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:rgb(0,0,255);stop-opacity:1" />
-      <stop offset="100%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <rect x="3" y="20" rx="20" ry="20" width="400" height="50" fill='url(#grad1)'
-  style="stroke:black;stroke-width:2;opacity:0.8" />
-
-  <line x1="{{ ss_img_loc }}" y1="20" x2="{{ ss_img_loc }}" y2="70" style="stroke:black;stroke-width:8" />
-    <text x="3" y="85" fill="black">neutral</text>
-    <text x="326" y="85" fill="black">deleterious</text>
-
-</svg> 
-</div>
-</div>
-
-</div>
-
-{% if brca1_object.polyphen2_hvar_prediction != '' %}
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h4 class="panel-title">
-          
-        <canvas id='polyphen_circle' width='16' height='16'> </canvas> <b>PolyPhen2</b>
-      
-        </h4>
-      </div>
-      
-        <div class="panel-body">
-<p> <b>prediction based on {{ brca1_object.polyphen2_based_on }}:</b> {{ brca1_object.polyphen2_prediction }} </p> 
-<h5 style='text-align:center'> HumDiv </h5>
-<div class='row'>
-<div class='col-sm-2'>
-<p style='text-align:center'><b>prediction </b></p> </div>
-<div class='col-sm-2'>
-<p style='text-align:center'><b>class </b></p>  </div>
-<div class='col-sm-2'>
-<p style='text-align:center'><b>prob </b></p>  </div>
-<div class='col-sm-2'>
-<p style='text-align:center'><b>fpr </b></p>  </div>
-<div class='col-sm-2'>
-<p style='text-align:center'><b>tpr </b></p>  </div>
-<div class='col-sm-2'>
-<p style='text-align:center'><b>fdr </b></p>  </div>
-</div>
-<div class='row'>
-<div class='col-sm-2'>
-<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_prediction }}</p> </div>
-<div class='col-sm-2'>
-<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_class }}</p> </div>
-<div class='col-sm-2'>
-<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_prob }}</p> </div>
-<div class='col-sm-2'>
-<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_fpr }}</p> </div>
-<div class='col-sm-2'>
-<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_tpr }}</p> </div>
-<div class='col-sm-2'>
-<p style='text-align:center'>{{ brca1_object.polyphen2_hdiv_fdr }}</p> </div>
-
-</div> <!-- end row -->
-
-
-<h5 style='text-align:center'> HumVar </h5>
-<div class='row'>
-<div class='col-sm-2'>
-<p style='text-align:center'><b>prediction </b></p> </div>
-<div class='col-sm-2'>
-<p style='text-align:center'><b>class </b></p>  </div>
-<div class='col-sm-2'>
-<p style='text-align:center'><b>prob </b></p>  </div>
-<div class='col-sm-2'>
-<p style='text-align:center'><b>fpr </b></p>  </div>
-<div class='col-sm-2'>
-<p style='text-align:center'><b>tpr </b></p>  </div>
-<div class='col-sm-2'>
-<p style='text-align:center'><b>fdr </b></p>  </div>
-</div>
-<div class='row'>
-<div class='col-sm-2'>
-<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_prediction }}</p> </div>
-<div class='col-sm-2'>
-<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_class }}</p> </div>
-<div class='col-sm-2'>
-<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_prob }}</p> </div>
-<div class='col-sm-2'>
-<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_fpr }}</p> </div>
-<div class='col-sm-2'>
-<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_tpr }}</p> </div>
-<div class='col-sm-2'>
-<p style='text-align:center'>{{ brca1_object.polyphen2_hvar_fdr }}</p> </div>
-</div>
 
 
 
 </div>
-      </div>
-  </div>
+<!-- inner row -->
 
-{% endif %}
-
-</div>
-
-
+<div class="row">
 
                 {% if hgmd_pubmed_list != None %}
  
@@ -1140,20 +1473,22 @@ data-style1='stick'></div></div>
 
                 {% endfor %} 
                 {% endif %}
-
-
-
 </div>
-<!-- inner row -->
-
-
 
 
         </div>
         <!-- /.row-->
 
- 
-        
+
+
+    
+    
+    
+    
+    
+
+     
+   
 
     </div>
     <!-- /.container -->
@@ -1220,8 +1555,29 @@ $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
 });
 
+$(function () {
 
+    var active = true;
 
+    $('#collapse-init').click(function () {
+        if (active) {
+            active = false;
+            $('.panel-collapse').collapse('show');
+            $('.panel-title').attr('data-toggle', '');
+            $(this).text('Collapse all panels');
+        } else {
+            active = true;
+            $('.panel-collapse').collapse('hide');
+            $('.panel-title').attr('data-toggle', 'collapse');
+            $(this).text('Show all panels');
+        }
+    });
+    
+    $('#accordion').on('show.bs.collapse', function () {
+        if (active) $('#accordion .in').collapse('hide');
+    });
+
+});
 
 
 (function($){
@@ -1229,7 +1585,6 @@ $(document).ready(function(){
     $(document).ready(function (){
             $('.dropdown-toggle').dropdown();
             
-
     });
 
 })(jQuery);
