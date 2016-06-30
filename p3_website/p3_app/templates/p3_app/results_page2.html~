@@ -569,13 +569,13 @@ add_alamut_pd4_values();
                 <div style="height: 500px; width: 500px" class='viewer_3Dmoljs' data-pdb='{{ pdb_entry }}' data-backgroundcolor='white' data-style='cartoon:color=spectrum' data-select1={{ resi_string }} data-labelres1='backgroundOpacity:0.8;fontSize:14' 
 data-style1='stick'></div></div>
 
-<p> <b>Citation:</b> {{ pdb_list.2|upper }} </p>
+<p> <b>Citation:</b> {{ pdb_list.2 }} </p>
 <br>
             <p> View RCSB PDB entry <a href='http://www.rcsb.org/pdb/explore/explore.do?structureId={{ pdb_entry }}'>here</a> </p>
 
 </div> <div class="col-lg-6">
 
-    <h4><b>{{ pdb_list.1|upper }}</b></h4> 
+    <h4><b>{{ pdb_list.1 }}</b></h4> 
 
     {% for keys,values in pdb_list.0.items %}
     <p> substructure {{ keys }} </p>
@@ -612,13 +612,14 @@ data-style1='stick'></div></div>
                     <h2>{{ chr_num }}:{{ chr_loc }} </h2>
                     {% elif protein_id != False %}
                     <h2>{{ protein_id }} - {{ aa_change }} </h2>
+                    <!--
                     {% if brca1_object.rsid != '' %}
                     {% if rsid == False %}
                     <h2>
                     ({{ brca1_object.rsid }})
                     {% endif %}
-                    {% endif %}
-                    </h2>
+                    {% endif %} 
+                    </h2> -->
                     {% endif %}
 </div>
                 <!--
@@ -636,16 +637,29 @@ data-style1='stick'></div></div>
                 <td> {{ brca1_object.hgvs_prot }} </td>
                 </tr>
                 </table> -->
-
-<div class="col-lg-4">
+<div class='col-lg-4'>
 <button id="collapse-init" class="btn btn-primary">
     Show all panels
-</button> </div>
+</button> 
+
+        <a data-toggle="tooltip" title="Click on the button to expand/close all panels. Otherwise click on the title of each individual panel to expand.">
+          <span class="glyphicon glyphicon-question-sign"></span>
+        </a>
+
+</div>
 
 
 
                 <div class='col-lg-6'>
                 <table class='table'>
+                {% if chr_num != False or protein_id != False %}
+                {% if brca1_object.rsid != '' %}
+                <tr>
+                    <th> rs number: </th>
+                    <td> {{ brca1_object.rsid }} </td>
+                </tr>
+                {% endif %}
+                {% endif %}
                 <tr>
                     <td> <b>chromosome location: </b> </td>
                     <td> {{ brca1_object.hg19_chr }}:{{ brca1_object.hg19_pos }} </td>
@@ -1107,173 +1121,6 @@ data-style1='stick'></div></div>
 {% endif %}
 
 
-    <div class="panel panel-default">
-      <div class="panel-heading" data-toggle="collapse" data-target="#literature_panel">
-        <h4 class="panel-title">
-          
-         <b>Literature Review</b>
-      
-        </h4>
-      </div>
-      
-<div id="literature_panel" class="panel-collapse collapse">
-        <div class="panel-body">
-
-{% if brca1_object.lindor_posterior_pb_deleterious != '' %}
-<p> From <a href='http://www.ncbi.nlm.nih.gov/pubmed/21990134'>Lindor et. al</a>:</p>
-<table class="table">
-<tr>
-<th> Odds in Favor of Casuality:  </th>
-<td>{{ brca1_object.lindor_odds_causality }} </td>
-</tr>
-<tr>
-<th> Prior Probability of being Deleterious: </th>
-<td>{{ brca1_object.lindor_prior_pb_deleterious }} </td>
-</tr>
-<tr>
-<th> Posterior Probability of being Deleterious: </th>
-<td>{{ brca1_object.lindor_posterior_pb_deleterious }} </td>
-</tr>
-</table>
-{% endif %}
-
-{% if brca1_object.easton_class != '' %}
-<p> From <a href='http://www.ncbi.nlm.nih.gov/pubmed/17924331'>Easton et. al</a>:</p>
-<table class="table">
-<tr>
-<th> Class:  </th>
-<td>{{ brca1_object.easton_class }} </td>
-</tr>
-<tr>
-<th> Odds Causality: </th>
-<td>{{ brca1_object.easton_odds_causality }} </td>
-</tr>
-<tr>
-<th> Odds Neutrality: </th>
-<td>{{ brca1_object.easton_odds_neutrality }} </td>
-</tr>
-</table>
-<p style='text-align:center'> log<sub>10</sub>-likelihood ratio Scores </p>
-<table class="table">
-<tr> 
-<th> Family History:</th>
-<td>{{ brca1_object.easton_family_history_llr }} </td>
-</tr>
-<tr>
-<th> Co-Occurrence: </th>
-<td>{{ brca1_object.easton_coocurrence_llr }} </td>
-</tr>
-<tr>
-<th> Co-Segregation: </th>
-<td>{{ brca1_object.easton_cosegregation_llr }} </td>
-</tr>
-<tr>
-<th> Combined: </th>
-<td>{{ brca1_object.easton_combined_llr }} </td>
-</tr>
-</table>
-
-
-{% endif %}
-
-{% if brca1_object.houdayer_splice_class != '' %}
-<p> From <a href='http://www.ncbi.nlm.nih.gov/pubmed/22505045'>Houdayer et. al</a>:</p>
-<table class='table'>
-{% if brca1_object.houdayer_splice_class != '' %}
-<tr>
-<th> Splice Class: </th>
-<td> {{ brca1_object.houdayer_splice_class }} </td>
-</tr>
-{% endif %}
-{% if brca1_object.houdayer_ssf != '' %}
-<tr>
-<th> Splice Site Finder: </th>
-<td> {{ brca1_object.houdayer_ssf }} </td>
-</tr>
-{% endif %}
-{% if brca1_object.houdayer_mes != '' %}
-<tr>
-<th> MaxEntScan: </th>
-<td> {{ brca1_object.houdayer_mes }} </td>
-</tr>
-{% endif %}
-{% if brca1_object.houdayer_nnsplice != '' %}
-<tr>
-<th> Splice Site Prediction by Neural Network: </th>
-<td> {{ brca1_object.houdayer_nnsplice }} </td>
-</tr>
-{% endif %}
-{% if brca1_object.houdayer_assa != '' %}
-<tr>
-<th> ASSA: </th>
-<td> {{ brca1_object.houdayer_assa }} </td>
-</tr>
-{% endif %}
-{% if brca1_object.houdayer_consequence != '' %}
-<tr>
-<th> Consequence: </th>
-<td> {{ brca1_object.houdayer_consequence }} </td>
-</tr>
-{% endif %}
-</table>
-
-{% endif %}
-
-{% if brca1_object.bouwman_mutation_type != '' %}
-<p>From Bouwman et. al </p>
-<table class='table'>
-{% if brca1_object.bouwman_mutation_type != '' %}
-<tr>
-<th> </th>
-<td> {{ brca1_object.bouwman_mutation_type }} </td>
-</tr>
-{% endif %}
-{% if brca1_object.bouwman_AlignGVGD != '' %}
-<tr>
-<th> </th>
-<td> {{ brca1_object.bouwman_AlignGVGD }} </td>
-</tr>
-{% endif %}
-{% if brca1_object.bouwman_predicted_splice_effect != '' %}
-<tr>
-<th> </th>
-<td> {{ brca1_object.bouwman_predicted_splice_effect }} </td>
-</tr>
-{% endif %}
-{% if brca1_object.bouwman_lit_predictions != '' %}
-<tr>
-<th> </th>
-<td> {{ brca1_object.bouwman_lit_predictions }}</td>
-</tr>
-{% endif %}
-{% if brca1_object.bouwman_growth != '' %}
-<tr>
-<th> </th>
-<td> {{ brca1_object.bouwman_growth }} </td>
-</tr>
-{% endif %}
-{% if brca1_object.bouwman_ic50 != '' %}
-<tr>
-<th> </th>
-<td> {{ brca1_object.bouwman_ic50 }} </td>
-</tr>
-{% endif %}
-{% if brca1_object.bouwman_classification != '' %}
-<tr>
-<th> </th>
-<td> {{ brca1_object.bouwman_classification }} </td>
-</tr>
-{% endif %}
-
-
-
-
-</table>
-{% endif %}
-
-</div>
-      </div> </div>
-
 
 
 
@@ -1431,8 +1278,6 @@ data-style1='stick'></div></div>
 {% endif %}
 
 
-
-
 </div><!-- end of accordian div -->
 
 
@@ -1443,14 +1288,205 @@ data-style1='stick'></div></div>
 
 
 
+
 </div>
 <!-- inner row -->
 
-<div class="row">
+<div class="row col-lg-12">
+
+<div class="panel-group" id="accordion2">
+
+<!-- if statement for lit review panel -->
+
+    <div class="panel panel-default">
+      <div class="panel-heading" data-toggle="collapse" data-target="#literature_panel">
+        <h4 class="panel-title">
+          
+         <b>Literature Review</b>
+      
+        </h4>
+      </div>
+      
+<div id="literature_panel" class="panel-collapse collapse">
+        <div class="panel-body">
+
+{% if brca1_object.lindor_posterior_pb_deleterious != '' %}
+<div class="panel panel-default">
+<div class='col-lg-6'>
+<p> From <a href='http://www.ncbi.nlm.nih.gov/pubmed/21990134'>Lindor et. al</a>:</p>
+<table class="table">
+<tr>
+<th> Odds in Favor of Casuality:  </th>
+<td>{{ brca1_object.lindor_odds_causality }} </td>
+</tr>
+<tr>
+<th> Prior Probability of being Deleterious: </th>
+<td>{{ brca1_object.lindor_prior_pb_deleterious }} </td>
+</tr>
+<tr>
+<th> Posterior Probability of being Deleterious: </th>
+<td>{{ brca1_object.lindor_posterior_pb_deleterious }} </td>
+</tr>
+</table>
+
+</div> </div>
+{% endif %}
+
+{% if brca1_object.easton_class != '' %}
+<div class='col-lg-6'>
+<p> From <a href='http://www.ncbi.nlm.nih.gov/pubmed/17924331'>Easton et. al</a>:</p>
+<table class="table">
+<tr>
+<th> Class:  </th>
+<td>{{ brca1_object.easton_class }} </td>
+</tr>
+<tr>
+<th> Odds Causality: </th>
+<td>{{ brca1_object.easton_odds_causality }} </td>
+</tr>
+<tr>
+<th> Odds Neutrality: </th>
+<td>{{ brca1_object.easton_odds_neutrality }} </td>
+</tr>
+</table>
+<p style='text-align:center'> log<sub>10</sub>-likelihood ratio Scores </p>
+<table class="table">
+<tr> 
+<th> Family History:</th>
+<td>{{ brca1_object.easton_family_history_llr }} </td>
+</tr>
+<tr>
+<th> Co-Occurrence: </th>
+<td>{{ brca1_object.easton_coocurrence_llr }} </td>
+</tr>
+<tr>
+<th> Co-Segregation: </th>
+<td>{{ brca1_object.easton_cosegregation_llr }} </td>
+</tr>
+<tr>
+<th> Combined: </th>
+<td>{{ brca1_object.easton_combined_llr }} </td>
+</tr>
+</table>
+
+</div>
+{% endif %}
+
+{% if brca1_object.houdayer_splice_class != '' %}
+<div class='col-lg-6'>
+<p> From <a href='http://www.ncbi.nlm.nih.gov/pubmed/22505045'>Houdayer et. al</a>:</p>
+<table class='table'>
+{% if brca1_object.houdayer_splice_class != '' %}
+<tr>
+<th> Splice Class: </th>
+<td> {{ brca1_object.houdayer_splice_class }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.houdayer_ssf != '' %}
+<tr>
+<th> Splice Site Finder: </th>
+<td> {{ brca1_object.houdayer_ssf }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.houdayer_mes != '' %}
+<tr>
+<th> MaxEntScan: </th>
+<td> {{ brca1_object.houdayer_mes }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.houdayer_nnsplice != '' %}
+<tr>
+<th> Splice Site Prediction by Neural Network: </th>
+<td> {{ brca1_object.houdayer_nnsplice }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.houdayer_assa != '' %}
+<tr>
+<th> ASSA: </th>
+<td> {{ brca1_object.houdayer_assa }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.houdayer_consequence != '' %}
+<tr>
+<th> Consequence: </th>
+<td> {{ brca1_object.houdayer_consequence }} </td>
+</tr>
+{% endif %}
+</table>
+
+</div>
+{% endif %}
+
+{% if brca1_object.bouwman_mutation_type != '' %}
+<div class='col-lg-6'>
+<p>From <a href='http://www.ncbi.nlm.nih.gov/pubmed/23867111'>Bouwman et. al</a> </p>
+<table class='table'>
+{% if brca1_object.bouwman_mutation_type != '' %}
+<tr>
+<th> Mutation Type </th>
+<td> {{ brca1_object.bouwman_mutation_type }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.bouwman_aligngvgd != '' %}
+<tr>
+<th> Align-GVGD </th>
+<td> {{ brca1_object.bouwman_aligngvgd }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.bouwman_predicted_splice_effect != '' %}
+<tr>
+<th> Predicted Splice Effect </th>
+<td> {{ brca1_object.bouwman_predicted_splice_effect }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.bouwman_lit_predictions != '' %}
+<tr>
+<th> Literature Predictions </th>
+<td> {{ brca1_object.bouwman_lit_predictions }}</td>
+</tr>
+{% endif %}
+{% if brca1_object.bouwman_growth != '' %}
+<tr>
+<th> Growth </th>
+<td> {{ brca1_object.bouwman_growth }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.bouwman_ic50 != '' %}
+<tr>
+<th> IC<sub>50</sub> </th>
+<td> {{ brca1_object.bouwman_ic50 }} </td>
+</tr>
+{% endif %}
+{% if brca1_object.bouwman_classification != '' %}
+<tr>
+<th> Classification </th>
+<td> {{ brca1_object.bouwman_classification }} </td>
+</tr>
+{% endif %}
+
+
+
+
+</table>
+
+</div>
+{% endif %}
+
+</div>
+      </div> </div>
+
 
                 {% if hgmd_pubmed_list != None %}
+    <div class="panel panel-default">
+      <div class="panel-heading" data-toggle="collapse" data-target="#pubmed_citations_panel">
+        <h4 class="panel-title">
+
  
-                <p> <b> PubMed Citations: </b> </p>
+                <b> PubMed Citations </b> </h4>
+        </div>
+<div id="pubmed_citations_panel" class="panel-collapse collapse">
+        <div class="panel-body">
+
                 {% for pmid in hgmd_pubmed_list %}
 
                 {% for keys,values in pubmed_dict.items %}
@@ -1473,9 +1509,11 @@ data-style1='stick'></div></div>
 
                 {% endfor %} 
                 {% endif %}
+
+</div> </div> </div>
 </div>
 
-
+</div> <!-- panel group -->
         </div>
         <!-- /.row-->
 
@@ -1576,6 +1614,11 @@ $(function () {
     $('#accordion').on('show.bs.collapse', function () {
         if (active) $('#accordion .in').collapse('hide');
     });
+
+    $('#accordion2').on('show.bs.collapse', function () {
+        if (active) $('#accordion2 .in').collapse('hide');
+    });
+
 
 });
 

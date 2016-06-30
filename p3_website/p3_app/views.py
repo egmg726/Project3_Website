@@ -185,6 +185,10 @@ def index(request):
 
         #list of pdb information for each gene for protein sequence diagram
 
+        pdb_translate_list = ['ring','brca1','bard1','brct','unp','atrip']
+        do_not_translate_list = ['of','being','and','in','with','the']
+
+
         if pdb_entry is not None:
             parser = PDBParser()
             pdbl = PDBList()
@@ -195,6 +199,57 @@ def index(request):
                 structure = parser.get_structure(pdb_entry,pdb_file)
                 compound = structure.header['compound']
                 title = structure.header['name']
+                
+
+
+                title_split = title.split()
+                title_list = []
+                for t in title_split:
+                    if '/' in t:
+                        t = t.split('/')
+                        for ts in t:
+                            for x in range(0,len(pdb_translate_list)):
+                                if pdb_translate_list[x] == ts:
+                                    index = t.index(ts)
+                                    ts = ts.upper()
+                                    t[index] = ts
+                            if ts not in do_not_translate_list and ts not in pdb_translate_list:
+                                ts = ts.title()
+        
+                        t = "/".join(t)
+
+                        title_list.append(t)
+
+                    elif '-' in t:
+                        t = t.split('-')
+                        for ts in t:
+                            for x in range(0,len(pdb_translate_list)):
+                                if pdb_translate_list[x] == ts:
+                                    index = t.index(ts)
+                                    ts = ts.upper()
+                                    t[index] = ts
+                            if ts not in do_not_translate_list and ts not in pdb_translate_list:
+                                ts = ts.title()
+
+                        t = '-'.join(t)
+
+                        title_list.append(t)
+
+                    else:
+                        for x in range(0,len(pdb_translate_list)):
+                            if pdb_translate_list[x] == t:
+                                t = t.upper()
+                        if t not in do_not_translate_list and t not in pdb_translate_list:
+                            t = t.title()
+
+                        title_list.append(t)              
+                
+                title = ' '.join(title_list)
+
+
+                #title = correct_pdb_capitalization(title)
+                
+
                 journal = structure.header['journal_reference']
                 pdb_list = [compound,title,journal]
             elif type(pdb_entry) == list:

@@ -1,18 +1,19 @@
 import requests, sys
 import json
 import pandas as pd
-import math
+from requests.exceptions import HTTPError
  
 server = "https://rest.ensembl.org"
 server = "http://grch37.rest.ensembl.org"
 #ext = "/vep/human/region/9:22125503-22125502:1/C?"
-#ext = "/vep/human/hgvs/ENST00000357654:c.5A>G"
-#ext = "/vep/human/hgvs/ENSP00000418960:p.M1V"
+ext = "/vep/human/hgvs/ENST00000357654:c.1A>G"
+#ext = "/vep/human/hgvs/ENSP00000418960:p.M1L"
 #ext = "/lookup/id/ENSG00000012048?expand=1"
-ext = "/lookup/id/ENST00000357654?expand=1"
-#ext = "/variation/human/rs80356994"
+#ext = "/lookup/id/ENST00000357654?expand=1"
+#ext = "/variation/human/rs80357069"
 #ext = "/vep/human/region/17:43124078-43124078:1/C"
-ext = "/vep/human/region/17:41276044-41276044:1/G"
+#ext = "/vep/human/region/17:41276113-41276113:1/A"
+#ext = "/variation/human/rs80357287"
 
 r = requests.get(server+ext, headers={ "Content-Type" : "application/json"})
  
@@ -21,17 +22,109 @@ if not r.ok:
   sys.exit()
  
 decoded = r.json()
-ensembl_dict = decoded[0]
+#print decoded
+#print decoded['start']
+#print decoded['end']
+#print decoded['Exon']
+#ensembl_dict = decoded[0] #for vep
+
+nucleotides = ['A','C','G','T']
+
+
+
 
 
 brca1_csv = pd.read_csv('/project/homemsc/eg315/project3/p3_website/BRCA1.missense.20150128.csv')
 chr_list = brca1_csv.hg19_chr.tolist()
 pos_list = brca1_csv.hg19_pos.tolist()
+rsid_list = brca1_csv.rsID.tolist()
 
-for x in brca1_csv.rsID.tolist():
-    if type(x) == float:
+d_list = []
+cv_list = []
+rfc_list = []
+tc_list = []
+cv_index = 0
+count = 0
+
+for x in range(0,len(rsid_list)):
+    chromosome = chr_list[x]
+    position = pos_list[x]
+    rsid = rsid_list[x]
+    for nuc in nucleotides:
+        try:
+            ext = "/vep/human/region/"+str(chromosome)+":"+str(position)+"-"+str(position)+":1/"+nuc
+            r = requests.get(server+ext, headers={ "Content-Type" : "application/json"})
+ 
+            if not r.ok:
+                r.raise_for_status()
+                sys.exit()
+ 
+            decoded = r.json()
+            e_dict = decoded[0]
+            e_dict['index'] = count
+            
+            try:
+                colocated_variants = e_dict['colocated_variants']
+                for cv in colocated_variants:
+                    cv['ensembl_main_key'] = count
+                
+                    #cv['index'] = cv_index
+                    #cv_index += 1
+                    try:
+                        cv['clin_sig'] = ','.join(cv['clin_sig'])
+                    except KeyError:
+                        cv['clin_sig'] = ''
+
+                    if cv not in cv_list:
+                        cv_list.append(cv)
+
+                e_dict.pop('colocated_variants', None)
+
+            except KeyError:
+                e_dict['colocated_variants'] = ''
+            
+
+            '''
+            regulatory_feature_consequences = e_dict['regulatory_feature_consequences']
+            for rfc in regulatory_feature_consequences:
+                if rfc not in rfc_list:
+                    rfc_list.append(rfc)
+            '''
+            e_dict.pop('regulatory_feature_consequences', None)
+
+            transcript_consequences = e_dict['transcript_consequences']
+            for tc in transcript_consequences:
+                tc['ensembl_main_key'] = count
+                try:
+                    tc['consequence_terms'] = ','.join(tc['consequence_terms'])
+                except KeyError:
+                    tc['consequence_terms'] = ''
+
+                if tc not in tc_list:
+                    tc_list.append(tc)
+
+            e_dict.pop('transcript_consequences', None)
+
+            d_list.append(e_dict)
+            count += 1
+
+        except HTTPError:
+            continue
+
+pd.DataFrame(d_list).to_csv('ensembl_dict_test.csv')
+pd.DataFrame(cv_list).to_csv('cv_dict.csv')
+pd.DataFrame(tc_list).to_csv('tc_dict.csv')
+
+'''
+rsid_pos_dict = {}
+
+for x in range(0,len(rsid_list)):
+    rsid = rsid_list[x]
+    if type(rsid) == float:
         continue
-    elif type(x) == str:
-        break
+    elif type(rsid) == str:
+        rsid_pos_dict[rsid] = [chr_list[x],pos_list[x]]
 
+print rsid_pos_dict
 #print decoded
+'''
