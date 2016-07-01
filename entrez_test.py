@@ -25,11 +25,12 @@ handle = Entrez.esummary(db='gene',id='672',retmode='text')
 record = Entrez.read(handle)
 handle.close()
 
-print record
+#print record
 
 entrez_dict = dict(record['DocumentSummarySet'])
 gene_dict = dict(entrez_dict['DocumentSummary'][0])
-print gene_dict
+print gene_dict.keys()
+print gene_dict['CurrentID']
 #print gene_dict['Description']
 #print gene_dict['Summary']
 

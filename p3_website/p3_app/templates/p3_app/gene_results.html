@@ -171,12 +171,20 @@ $.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Boot
 
 <div class="container col-lg-12">
 <div class='col-lg-8'>
-<h2> Protein Sequence for {{ gene_id }}</h2>
+<h2> Protein Sequence for {{ gene_id }} </h2>
+
+
+
+
 <p> <i>Aliases: {{ gene_dict.OtherAliases }} </i></p>
 </div>
+<div class="row col-sm-12" style='text-align:right'>
 
+        <a data-toggle="tooltip" data-placement="left" title="Generated sequence of queried protein with features from various sources. Hover over a domain for more information. Left click and drag to zoom in on a particular portion.">
+          <span class="glyphicon glyphicon-question-sign"></span>
+        </a>
 
-
+</div>
   <div id="main"></div>
 <br>
       <div class="row">
@@ -568,7 +576,7 @@ add_alamut_pd4_values();
     {% for keys,values in pdb_dict.items %}
     {% for keys_2, values_2 in pdb_stop_start_dict.items %}
     {% if keys == keys_2 %}
-    pdb_entries.push(['{{ keys }}','{{ values_2.0 }}','{{ values_2.1 }}','{{ values.0 }}','{{ values.1|upper }}','{{ values.2 }}'])
+    pdb_entries.push(['{{ keys }}','{{ values_2.0 }}','{{ values_2.1 }}','{{ values.0 }}','{{ values.1 }}','{{ values.2 }}'])
 
     {% endif %}
     {% endfor %}

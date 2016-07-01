@@ -574,17 +574,22 @@ data-style1='stick'></div></div>
             <p> View RCSB PDB entry <a href='http://www.rcsb.org/pdb/explore/explore.do?structureId={{ pdb_entry }}'>here</a> </p>
 
 </div> <div class="col-lg-6">
+<!-- maybe make overflow box for large number of substructures -->
 
     <h4><b>{{ pdb_list.1 }}</b></h4> 
 
     {% for keys,values in pdb_list.0.items %}
-    <p> substructure {{ keys }} </p>
+    <p> Substructure {{ keys }} </p>
     
     <table class="table table-hover">
     {% for k,v in values.items %}
     {% if v != '' %}
     <tr>
-    <td> <b>{{ k }}</b> </td>
+    {% if k == 'ec' %}
+    <td> <b>{{ k|upper }}</b> </td>
+    {% else %}
+    <td> <b>{{ k|title }}</b> </td>
+    {% endif %}
     <td> {{ v }} </td>
     </tr>
     {% endif %}
@@ -1311,7 +1316,7 @@ data-style1='stick'></div></div>
         <div class="panel-body">
 
 {% if brca1_object.lindor_posterior_pb_deleterious != '' %}
-<div class="panel panel-default">
+
 <div class='col-lg-6'>
 <p> From <a href='http://www.ncbi.nlm.nih.gov/pubmed/21990134'>Lindor et. al</a>:</p>
 <table class="table">
@@ -1329,7 +1334,7 @@ data-style1='stick'></div></div>
 </tr>
 </table>
 
-</div> </div>
+</div>
 {% endif %}
 
 {% if brca1_object.easton_class != '' %}

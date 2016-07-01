@@ -107,6 +107,7 @@ for x in range(0,len(rsid_list)):
 
             d_list.append(e_dict)
             count += 1
+            print x,'/',len(rsid_list)
 
         except HTTPError:
             continue

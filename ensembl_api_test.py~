@@ -46,7 +46,7 @@ tc_list = []
 cv_index = 0
 count = 0
 
-for x in range(0,len(rsid_list)):
+for x in len(rfc_list):
     chromosome = chr_list[x]
     position = pos_list[x]
     rsid = rsid_list[x]
@@ -63,21 +63,26 @@ for x in range(0,len(rsid_list)):
             e_dict = decoded[0]
             e_dict['index'] = count
             
-            colocated_variants = e_dict['colocated_variants']
-            for cv in colocated_variants:
-                cv['ensembl_main_key'] = count
+            try:
+                colocated_variants = e_dict['colocated_variants']
+                for cv in colocated_variants:
+                    cv['ensembl_main_key'] = count
                 
                     #cv['index'] = cv_index
                     #cv_index += 1
-                try:
-                    cv['clin_sig'] = ','.join(cv['clin_sig'])
-                except KeyError:
-                    cv['clin_sig'] = ''
+                    try:
+                        cv['clin_sig'] = ','.join(cv['clin_sig'])
+                    except KeyError:
+                        cv['clin_sig'] = ''
 
-                if cv not in cv_list:
-                    cv_list.append(cv)
+                    if cv not in cv_list:
+                        cv_list.append(cv)
 
-            e_dict.pop('colocated_variants', None)
+                e_dict.pop('colocated_variants', None)
+
+            except KeyError:
+                e_dict['colocated_variants'] = ''
+            
 
             '''
             regulatory_feature_consequences = e_dict['regulatory_feature_consequences']
@@ -102,6 +107,7 @@ for x in range(0,len(rsid_list)):
 
             d_list.append(e_dict)
             count += 1
+            print x
 
         except HTTPError:
             continue

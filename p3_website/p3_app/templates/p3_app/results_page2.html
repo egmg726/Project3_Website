@@ -193,6 +193,14 @@ $.fn.bootstrapBtn = bootstrapButton            // give $().bootstrapBtn the Boot
     <b>Scroll over the domains for more information.</b> <br><br></div> </div>
         </div>
 
+<div class="row col-sm-12" style='text-align:right'>
+
+        <a data-toggle="tooltip" data-placement="left" title="Generated sequence of queried protein with features from various sources. Hover over a domain for more information. Left click and drag to zoom in on a particular portion.">
+          <span class="glyphicon glyphicon-question-sign"></span>
+        </a>
+
+</div>
+
   <div id="main"></div>
 <br>
       <div class="row">
@@ -574,17 +582,22 @@ data-style1='stick'></div></div>
             <p> View RCSB PDB entry <a href='http://www.rcsb.org/pdb/explore/explore.do?structureId={{ pdb_entry }}'>here</a> </p>
 
 </div> <div class="col-lg-6">
+<!-- maybe make overflow box for large number of substructures -->
 
     <h4><b>{{ pdb_list.1 }}</b></h4> 
 
     {% for keys,values in pdb_list.0.items %}
-    <p> substructure {{ keys }} </p>
+    <p> Substructure {{ keys }} </p>
     
     <table class="table table-hover">
     {% for k,v in values.items %}
     {% if v != '' %}
     <tr>
-    <td> <b>{{ k }}</b> </td>
+    {% if k == 'ec' %}
+    <td> <b>{{ k|upper }}</b> </td>
+    {% else %}
+    <td> <b>{{ k|title }}</b> </td>
+    {% endif %}
     <td> {{ v }} </td>
     </tr>
     {% endif %}
